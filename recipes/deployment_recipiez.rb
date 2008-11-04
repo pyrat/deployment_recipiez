@@ -29,7 +29,11 @@ namespace :recipiez do
   task :get_rev_log do
     grab_revision_log
   end
-
+  
+  desc "Restart passenger application instance"
+  task :restart_passenger do
+    run "touch #{release_path}/tmp/restart.txt"
+  end
 
 
   desc "Restart mongrel."

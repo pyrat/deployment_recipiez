@@ -34,7 +34,12 @@ namespace :recipiez do
   task :restart_passenger do
     run "touch #{release_path}/tmp/restart.txt"
   end
-
+  
+  desc "Upload contents of local system dir"
+  task :upload_system do
+    puts "Uploading system directory.."
+    system "rsync -vr --exclude='.DS_Store' -e \"ssh -p #{ssh_options[:port]}\" public/system #{user}@#{domain}:#{shared_path}/"
+  end
 
   desc "Restart mongrel."
   task :single_mongrel_restart do

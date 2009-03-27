@@ -8,15 +8,10 @@ begin
   require 'rubygems'
   require 'xmlsimple'
 rescue LoadError
-  begin
-    require 'rubygems'
-    require_gem 'xml-simple'
-  rescue LoadError
     abort <<-ERROR
 The 'xml-simple' library could not be loaded. If you have RubyGems installed
 you can install xml-simple by doing "gem install xml-simple".
 ERROR
-  end
 end
 
 # An interface to the Basecamp web-services API. Usage is straightforward:

@@ -12,8 +12,12 @@ namespace :recipiez do
   task :rename_db_file do
     run "cp #{release_path}/config/database.#{rails_env} #{release_path}/config/database.yml"
   end
-
-
+  
+  desc "Rename db file for deployment."
+  task :rename_settings_file do
+    run "cp #{release_path}/config/settings.yml.#{rails_env} #{release_path}/config/settings.yml"
+  end
+  
   # You need to add the below line to your deploy.rb
   # set :basecamp_auth, {:username => 'robot', :domain => 'ifo.projectpath.com',
   #                         :password => 'robot', :project_id => 828898,

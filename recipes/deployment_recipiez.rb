@@ -115,6 +115,13 @@ namespace :recipiez do
 
 end
 
+namespace :deploy do
+  task :restart do
+    # override this task
+  end
+end
+
+
 
 def generate_archive(name)
   '/tmp/' + get_filename(name)

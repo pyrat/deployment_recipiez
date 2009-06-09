@@ -36,7 +36,7 @@ namespace :recipiez do
   
   desc "Restart passenger application instance"
   task :restart_passenger do
-    run "touch #{release_path}/tmp/restart.txt"
+    run "touch #{current_release}/tmp/restart.txt"
   end
   
   desc "Upload contents of local system dir"

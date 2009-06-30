@@ -109,7 +109,7 @@ namespace :recipiez do
   
   desc "Sync up the system directory"
   task :rsync_up_system do
-    system "rsync -vr -e \"ssh -p #{ssh_options[:port]}\" --exclude='.DS_Store' public/system #{user}@#{application}:#{shared_path}/"
+    system "rsync -vr -e \"ssh -p #{ssh_options[:port]}\" --exclude='.DS_Store' public/system #{user}@#{roles[:db].servers.first}:#{shared_path}/"
   end
 
   desc "Sync with database and files"

@@ -102,9 +102,14 @@ namespace :recipiez do
     `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
   end
 
-  desc "Tar up the shared system dir and copy it across"
+  desc "Rsync the shared system dir"
   task :rsync_system_dir do
     `rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{shared_path}/system/ public/system/`
+  end
+  
+  desc "Sync up the system directory"
+  task :rsync_up_system do
+    system "rsync -vr -e \"ssh -p #{ssh_options[:port]}\" --exclude='.DS_Store' public/system #{user}@#{application}:#{shared_path}/"
   end
 
   desc "Sync with database and files"

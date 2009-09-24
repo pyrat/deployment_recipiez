@@ -117,6 +117,12 @@ namespace :recipiez do
     dump_and_copy_and_restore_db
     rsync_system_dir
   end
+  
+  desc "Setup the deployment directories and fix permissions"
+  task :setup do
+    deploy::setup
+    sudo "chown -R #{user}:#{user} #{deploy_to}"
+  end
 
 end
 

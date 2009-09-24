@@ -114,7 +114,7 @@ namespace :recipiez do
     cmd += "#{db_dev} > #{dump_dir}#{filename}"
     puts "Running #{cmd}"
     `#{cmd}`
-    put "#{dump_dir}#{filename}", filename
+    put File.read("#{dump_dir}#{filename}"), filename
     logger.debug 'Dropping db'
     run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
     logger.debug 'Creating db'

@@ -12,12 +12,12 @@ namespace :recipiez do
   task :rename_db_file do
     run "cp #{release_path}/config/database.#{rails_env} #{release_path}/config/database.yml"
   end
-  
+
   desc "Rename db file for deployment."
   task :rename_settings_file do
     run "cp #{release_path}/config/settings.yml.#{rails_env} #{release_path}/config/settings.yml"
   end
-  
+
   # You need to add the below line to your deploy.rb
   # set :basecamp_auth, {:username => 'robot', :domain => 'ifo.projectpath.com',
   #                         :password => 'robot', :project_id => 828898,
@@ -33,12 +33,12 @@ namespace :recipiez do
   task :get_rev_log do
     grab_revision_log
   end
-  
+
   desc "Restart passenger application instance"
   task :restart_passenger do
     run "touch #{current_release}/tmp/restart.txt"
   end
-  
+
   desc "Upload contents of local system dir"
   task :upload_system do
     puts "Uploading system directory.."
@@ -106,7 +106,7 @@ namespace :recipiez do
   task :rsync_system_dir do
     `rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{shared_path}/system/ public/system/`
   end
-  
+
   desc "Sync up the system directory"
   task :rsync_up_system do
     system "rsync -vrz -e \"ssh -p #{ssh_options[:port]}\" --exclude='.DS_Store' public/system/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system"
@@ -117,55 +117,82 @@ namespace :recipiez do
     dump_and_copy_and_restore_db
     rsync_system_dir
   end
-  
+
   desc "Setup the deployment directories and fix permissions"
   task :setup do
     deploy::setup
     sudo "chown -R #{user}:#{user} #{deploy_to}"
   end
 
+  desc "Setup apache vhost"
+  task :apache_setup do
+    logger.info "generating .conf file"
+    apache_conf = "/etc/apache2/sites-available/#{application}"
+    template_file = %q{
+      <VirtualHost *:80>
+      ServerName <%= app_domain %>
+      ServerAlias www.<%= app_domain %>
+
+      DocumentRoot <%= deploy_to %>/current/public
+      RailsEnv <%= rails_env %>
+      
+        </VirtualHost>
+      }
+
+      require 'erb'
+
+      config = ERB.new(template_file)
+      put config.result(binding), "#{application}.conf"
+      logger.info "placing #{application}.conf on remote server"
+      sudo "mv #{application}.conf #{apache_conf}"
+      sudo "a2ensite #{apache_conf}"
+      sudo "/etc/init.d/apache2 reload"
+    end
+  end
+end
+
 end
 
 namespace :deploy do
-  task :restart do
-    # override this task
-  end
+task :restart do
+  # override this task
+end
 end
 
 
 
 def generate_archive(name)
-  '/tmp/' + get_filename(name)
+'/tmp/' + get_filename(name)
 end
 
 def get_filename(name)
-  name.sub('_', '.') + '.sql'
+name.sub('_', '.') + '.sql'
 end
 
 
 def grab_revision_log
-  case scm.to_sym
-  when :git
-    %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision} )
-  when :subversion
-    format_svn_log current_revision, previous_revision
-  end
+case scm.to_sym
+when :git
+  %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision} )
+when :subversion
+  format_svn_log current_revision, previous_revision
+end
 end
 
 def format_svn_log(current_revision, previous_revision)
-  # Using REXML as it comes bundled with Ruby, would love to use Hpricot.
-  # <logentry revision="2176">
-  # <author>jgoebel</author>
-  # <date>2006-09-17T02:38:48.040529Z</date>
-  # <msg>add delete link</msg>
-  # </logentry>
-  require 'rexml/document'
-  begin
-    xml = REXML::Document.new(%x( svn log --xml --revision #{current_revision}:#{previous_revision} ))
-    xml.elements.collect('//logentry') do |logentry|
-      "* [#{logentry.attributes['revision']}, #{logentry.elements['author'].text}] #{logentry.elements['msg'].text}"
-    end.join("\n")
-  rescue
-    %x( svn log --revision #{current_revision}:#{previous_revision} )
-  end
+# Using REXML as it comes bundled with Ruby, would love to use Hpricot.
+# <logentry revision="2176">
+# <author>jgoebel</author>
+# <date>2006-09-17T02:38:48.040529Z</date>
+# <msg>add delete link</msg>
+# </logentry>
+require 'rexml/document'
+begin
+  xml = REXML::Document.new(%x( svn log --xml --revision #{current_revision}:#{previous_revision} ))
+  xml.elements.collect('//logentry') do |logentry|
+    "* [#{logentry.attributes['revision']}, #{logentry.elements['author'].text}] #{logentry.elements['msg'].text}"
+  end.join("\n")
+rescue
+  %x( svn log --revision #{current_revision}:#{previous_revision} )
+end
 end

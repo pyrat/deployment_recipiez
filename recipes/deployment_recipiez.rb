@@ -85,7 +85,7 @@ namespace :recipiez do
 
 
   desc "Dump database, copy it across and restore locally."
-  task :dump_and_copy_and_restore_db do
+  task :pull_db do
     archive = generate_archive(application)
     filename = get_filename(application)
     cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
@@ -99,7 +99,28 @@ namespace :recipiez do
     puts result
     run "rm #{archive}"
 
+    puts "Restoring db"
+    `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
     `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
+    puts "All done!"
+  end
+
+  desc "Push up the db"
+  task :push_db do
+    filename = get_filename(application)
+    cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
+    cmd += " -p#{db_password} "
+    cmd += "#{db_dev} > #{dump_dir}#{filename}"
+    puts "Running #{cmd}"
+    `#{cmd}`
+    put "#{dump_dir}#{filename}", filename
+    logger.debug 'Dropping db'
+    run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
+    logger.debug 'Creating db'
+    run "mysqladmin -u#{db_user} -p#{db_password} --force create #{database_to_dump}"
+    logger.debug 'Restoring db'
+    run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
+    run "rm #{filename}"
   end
 
   desc "Rsync the shared system dir"
@@ -114,7 +135,7 @@ namespace :recipiez do
 
   desc "Sync with database and files"
   task :sync_remote do
-    dump_and_copy_and_restore_db
+    pull_db
     rsync_system_dir
   end
 

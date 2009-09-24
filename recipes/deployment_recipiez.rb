@@ -101,6 +101,7 @@ namespace :recipiez do
 
     puts "Restoring db"
     `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
+    `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
     `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
     puts "All done!"
   end

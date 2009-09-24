@@ -145,7 +145,7 @@ namespace :recipiez do
     put config.result(binding), "#{application}.conf"
     logger.info "placing #{application}.conf on remote server"
     sudo "mv #{application}.conf #{apache_conf}"
-    sudo "a2ensite #{apache_conf}"
+    sudo "a2ensite #{application}"
     sudo "/etc/init.d/apache2 reload"
   end
 end

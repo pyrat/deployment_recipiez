@@ -135,64 +135,61 @@ namespace :recipiez do
 
       DocumentRoot <%= deploy_to %>/current/public
       RailsEnv <%= rails_env %>
-      
-        </VirtualHost>
-      }
 
-      require 'erb'
+      </VirtualHost>
+    }
 
-      config = ERB.new(template_file)
-      put config.result(binding), "#{application}.conf"
-      logger.info "placing #{application}.conf on remote server"
-      sudo "mv #{application}.conf #{apache_conf}"
-      sudo "a2ensite #{apache_conf}"
-      sudo "/etc/init.d/apache2 reload"
-    end
+    require 'erb'
+
+    config = ERB.new(template_file)
+    put config.result(binding), "#{application}.conf"
+    logger.info "placing #{application}.conf on remote server"
+    sudo "mv #{application}.conf #{apache_conf}"
+    sudo "a2ensite #{apache_conf}"
+    sudo "/etc/init.d/apache2 reload"
   end
 end
 
-end
-
 namespace :deploy do
-task :restart do
-  # override this task
-end
+  task :restart do
+    # override this task
+  end
 end
 
 
 
 def generate_archive(name)
-'/tmp/' + get_filename(name)
+  '/tmp/' + get_filename(name)
 end
 
 def get_filename(name)
-name.sub('_', '.') + '.sql'
+  name.sub('_', '.') + '.sql'
 end
 
 
 def grab_revision_log
-case scm.to_sym
-when :git
-  %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision} )
-when :subversion
-  format_svn_log current_revision, previous_revision
-end
+  case scm.to_sym
+  when :git
+    %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision} )
+  when :subversion
+    format_svn_log current_revision, previous_revision
+  end
 end
 
 def format_svn_log(current_revision, previous_revision)
-# Using REXML as it comes bundled with Ruby, would love to use Hpricot.
-# <logentry revision="2176">
-# <author>jgoebel</author>
-# <date>2006-09-17T02:38:48.040529Z</date>
-# <msg>add delete link</msg>
-# </logentry>
-require 'rexml/document'
-begin
-  xml = REXML::Document.new(%x( svn log --xml --revision #{current_revision}:#{previous_revision} ))
-  xml.elements.collect('//logentry') do |logentry|
-    "* [#{logentry.attributes['revision']}, #{logentry.elements['author'].text}] #{logentry.elements['msg'].text}"
-  end.join("\n")
-rescue
-  %x( svn log --revision #{current_revision}:#{previous_revision} )
-end
+  # Using REXML as it comes bundled with Ruby, would love to use Hpricot.
+  # <logentry revision="2176">
+  # <author>jgoebel</author>
+  # <date>2006-09-17T02:38:48.040529Z</date>
+  # <msg>add delete link</msg>
+  # </logentry>
+  require 'rexml/document'
+  begin
+    xml = REXML::Document.new(%x( svn log --xml --revision #{current_revision}:#{previous_revision} ))
+    xml.elements.collect('//logentry') do |logentry|
+      "* [#{logentry.attributes['revision']}, #{logentry.elements['author'].text}] #{logentry.elements['msg'].text}"
+    end.join("\n")
+  rescue
+    %x( svn log --revision #{current_revision}:#{previous_revision} )
+  end
 end

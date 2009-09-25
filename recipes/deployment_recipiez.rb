@@ -100,7 +100,11 @@ namespace :recipiez do
     run "rm #{archive}"
 
     puts "Restoring db"
-    `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
+    begin
+      `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
+    rescue
+      # do nothing
+    end
     `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
     `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
     puts "All done!"
@@ -116,7 +120,11 @@ namespace :recipiez do
     `#{cmd}`
     put File.read("#{dump_dir}#{filename}"), filename
     logger.debug 'Dropping db'
-    run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
+    begin
+      run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
+    rescue
+      # do nothing
+    end
     logger.debug 'Creating db'
     run "mysqladmin -u#{db_user} -p#{db_password} --force create #{database_to_dump}"
     logger.debug 'Restoring db'

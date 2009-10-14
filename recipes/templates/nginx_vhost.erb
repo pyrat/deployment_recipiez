@@ -1,0 +1,57 @@
+upstream <%= application %> {
+        <% i = 0 %>
+        <% num_servers.times do %>
+        server 127.0.0.1:<%= start_port.to_i + i %>;
+        <% i += 1 %>
+        <% end %>
+    }
+
+server {
+            listen   80;
+            server_name  www.<%= domain %>;
+            rewrite ^/(.*) http://domain.com permanent;
+           }
+
+
+server {
+            listen   80;
+            server_name <%= domain %>;
+
+            access_log <%= deploy_to %>/log/access.log;
+            error_log <%= deploy_to %>/log/error.log;
+
+            root   <%= deploy_to %>/public/;
+            index  index.html;
+
+            location / {
+                          proxy_set_header  X-Real-IP  $remote_addr;
+                          proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+                          proxy_set_header Host $http_host;
+                          proxy_redirect false;
+                          
+                          # If the file exists as a static file serve it directly without
+                          # running all the other rewrite tests on it
+                          if (-f $request_filename) {
+                            break;
+                          }
+                          
+                          if (-f $request_filename/index.html) {
+                                           rewrite (.*) $1/index.html break;
+                          }
+
+                          if (-f $request_filename.html) {
+                                           rewrite (.*) $1.html break;
+                          }
+
+                          if (!-f $request_filename) {
+                                           proxy_pass http://<%= application %>;
+                                           break;
+                          }
+            }
+            
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+              root   html;
+            }
+
+}

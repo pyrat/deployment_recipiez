@@ -15,7 +15,8 @@ namespace :thin do
     sudo "/etc/init.d/thin stop"
   end
   
-  desc "restart thin" do
+  desc "restart thin" 
+  task :restart, :roles => :app do
     sudo "/etc/init.d/thin restart"
   end
 

@@ -17,10 +17,10 @@ server {
             listen   80;
             server_name <%= domain %>;
 
-            access_log <%= deploy_to %>/log/access.log;
-            error_log <%= deploy_to %>/log/error.log;
+            access_log <%= current_path %>/log/access.log;
+            error_log <%= current_path %>/log/error.log;
 
-            root   <%= deploy_to %>/public/;
+            root   <%= current_path %>/public/;
             index  index.html;
 
             location / {

@@ -8,7 +8,6 @@ namespace :nginx do
     rescue
       # do nothing
     end
-    run "rm #{application}.conf"
     stop
     start
   end

@@ -8,8 +8,18 @@ namespace :nginx do
     rescue
       # do nothing
     end
-    stop
-    start
+    
+    begin
+      stop
+    rescue
+      # do nothing
+    end
+
+    begin
+      start
+    rescue
+      # do nothing
+    end
   end
 
   desc "Starts Nginx webserver"

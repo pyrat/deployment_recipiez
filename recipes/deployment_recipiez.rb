@@ -131,6 +131,12 @@ namespace :recipiez do
     run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
     run "rm #{filename}"
   end
+  
+  desc "pull db and system files"
+  task :pull_remote do
+    pull_db
+    rsync_system_dir
+  end
 
   desc "Rsync the shared system dir"
   task :rsync_system_dir do

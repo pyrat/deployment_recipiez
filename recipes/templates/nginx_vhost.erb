@@ -9,7 +9,7 @@ upstream <%= application %> {
 server {
             listen   80;
             server_name  www.<%= domain %>;
-            rewrite ^/(.*) http://domain.com permanent;
+            rewrite ^/(.*) http://<%= domain %> permanent;
            }
 
 

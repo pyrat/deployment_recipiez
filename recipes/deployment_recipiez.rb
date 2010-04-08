@@ -212,6 +212,16 @@ def grab_revision_log
   end
 end
 
+def get_identities
+  op = ''
+  if ssh_options[:keys] && ssh_options[:keys].any?
+    ssh_options[:keys].each do |priv_key|
+      op += "-i #{priv_key} "
+    end
+  end
+  op
+end
+
 def format_svn_log(current_revision, previous_revision)
   # Using REXML as it comes bundled with Ruby, would love to use Hpricot.
   # <logentry revision="2176">

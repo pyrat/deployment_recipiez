@@ -139,7 +139,7 @@ namespace :recipiez do
 
   desc "pull db and system files"
   task :pull_remote do
-    db::pull_db
+    db::pull
     rsync_system_dir
   end
 
@@ -149,14 +149,8 @@ namespace :recipiez do
   end
 
   desc "Sync up the system directory"
-  task :rsync_up_system do
+  task :push_system do
     system "rsync -vrz -e \"ssh -p #{ssh_options[:port]}\" --exclude='.DS_Store' public/system/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system"
-  end
-
-  desc "Sync with database and files"
-  task :sync_remote do
-    pull_db
-    rsync_system_dir
   end
 
   desc "Setup the deployment directories and fix permissions"
@@ -227,13 +221,13 @@ def get_identities
   op
 end
 
+# Using REXML as it comes bundled with Ruby, would love to use Hpricot.
+# <logentry revision="2176">
+# <author>jgoebel</author>
+# <date>2006-09-17T02:38:48.040529Z</date>
+# <msg>add delete link</msg>
+# </logentry>
 def format_svn_log(current_revision, previous_revision)
-  # Using REXML as it comes bundled with Ruby, would love to use Hpricot.
-  # <logentry revision="2176">
-  # <author>jgoebel</author>
-  # <date>2006-09-17T02:38:48.040529Z</date>
-  # <msg>add delete link</msg>
-  # </logentry>
   require 'rexml/document'
   begin
     xml = REXML::Document.new(%x( svn log --xml --revision #{current_revision}:#{previous_revision} ))

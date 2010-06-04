@@ -84,57 +84,62 @@ namespace :recipiez do
   end
 
 
-  desc "Dump database, copy it across and restore locally."
-  task :pull_db do
-    archive = generate_archive(application)
-    filename = get_filename(application)
-    cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
-    cmd += " -p#{db_password} "
-    cmd += "#{database_to_dump} > #{archive}"
-    result = run(cmd)
+  namespace :db do
 
-    cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
-    puts "running #{cmd}"
-    result = system(cmd)
-    puts result
-    run "rm #{archive}"
 
-    puts "Restoring db"
-    begin
-      `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
-    rescue
-      # do nothing
+    desc "Dump database, copy it across and restore locally."
+    task :pull do
+      archive = generate_archive(application)
+      filename = get_filename(application)
+      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
+      cmd += " -p#{db_password} "
+      cmd += "#{database_to_dump} > #{archive}"
+      result = run(cmd)
+
+      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
+      puts "running #{cmd}"
+      result = system(cmd)
+      puts result
+      run "rm #{archive}"
+
+      puts "Restoring db"
+      begin
+        `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
+      rescue
+        # do nothing
+      end
+      `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
+      `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
+      puts "All done!"
     end
-    `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
-    `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
-    puts "All done!"
+
+    desc "Push up the db"
+    task :push do
+      filename = get_filename(application)
+      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
+      cmd += " -p#{db_password} "
+      cmd += "#{db_dev} > #{dump_dir}#{filename}"
+      puts "Running #{cmd}"
+      `#{cmd}`
+      put File.read("#{dump_dir}#{filename}"), filename
+      logger.debug 'Dropping db'
+      begin
+        run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
+      rescue
+        # do nothing
+      end
+      logger.debug 'Creating db'
+      run "mysqladmin -u#{db_user} -p#{db_password} --force create #{database_to_dump}"
+      logger.debug 'Restoring db'
+      run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
+      run "rm #{filename}"
+    end
+
   end
 
-  desc "Push up the db"
-  task :push_db do
-    filename = get_filename(application)
-    cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
-    cmd += " -p#{db_password} "
-    cmd += "#{db_dev} > #{dump_dir}#{filename}"
-    puts "Running #{cmd}"
-    `#{cmd}`
-    put File.read("#{dump_dir}#{filename}"), filename
-    logger.debug 'Dropping db'
-    begin
-      run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
-    rescue
-      # do nothing
-    end
-    logger.debug 'Creating db'
-    run "mysqladmin -u#{db_user} -p#{db_password} --force create #{database_to_dump}"
-    logger.debug 'Restoring db'
-    run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
-    run "rm #{filename}"
-  end
-  
   desc "pull db and system files"
   task :pull_remote do
-    pull_db
+    db::pull_db
     rsync_system_dir
   end
 

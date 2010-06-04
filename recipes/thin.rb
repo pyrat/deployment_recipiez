@@ -1,6 +1,6 @@
 namespace :thin do
   
-  desc "configures thin"
+  desc "configures thin, requires num_servers and start_port"
   task :configure, :roles => :app do
     sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path}  --servers #{num_servers} -e #{rails_env} --port #{start_port}"
   end

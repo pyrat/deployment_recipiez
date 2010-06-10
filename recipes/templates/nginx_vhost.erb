@@ -22,12 +22,23 @@ server {
 
             root   <%= current_path %>/public/;
             index  index.html;
+            client_max_body_size 50M;
+            
+            # this rewrites all the requests to the maintenance.html
+            # page if it exists in the doc root. This is for capistrano's
+            # disable web task
+            if (-f $document_root/system/maintenance.html) {
+              rewrite ^(.*)$ /system/maintenance.html last;
+              break;
+            }
+            
 
             location / {
                           proxy_set_header  X-Real-IP  $remote_addr;
                           proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
                           proxy_set_header Host $http_host;
                           proxy_redirect false;
+                          proxy_max_temp_file_size 0;
                           
                           # If the file exists as a static file serve it directly without
                           # running all the other rewrite tests on it
@@ -55,3 +66,68 @@ server {
             }
 
 }
+
+
+<% if ssl && ssl == 'on' %>
+  server {
+              listen   443;
+              ssl on;
+              
+              ssl_certificate <%= ssl_cert %>;
+              ssl_certificate_key <%= ssl_key %>;
+              
+
+              access_log <%= current_path %>/log/access.log;
+              error_log <%= current_path %>/log/error.log;
+
+              root   <%= current_path %>/public/;
+              index  index.html;
+              client_max_body_size 50M;
+              
+              
+              # this rewrites all the requests to the maintenance.html
+              # page if it exists in the doc root. This is for capistrano's
+              # disable web task
+              if (-f $document_root/system/maintenance.html) {
+                rewrite ^(.*)$ /system/maintenance.html last;
+                break;
+              }
+              
+              
+
+              location / {
+                            proxy_set_header  X-Real-IP  $remote_addr;
+                            proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+                            proxy_set_header Host $http_host;
+                            proxy_redirect false;
+                            proxy_set_header X-FORWARDED_PROTO https;
+                            proxy_max_temp_file_size 0;
+
+                            # If the file exists as a static file serve it directly without
+                            # running all the other rewrite tests on it
+                            if (-f $request_filename) {
+                              break;
+                            }
+
+                            if (-f $request_filename/index.html) {
+                                             rewrite (.*) $1/index.html break;
+                            }
+
+                            if (-f $request_filename.html) {
+                                             rewrite (.*) $1.html break;
+                            }
+
+                            if (!-f $request_filename) {
+                                             proxy_pass http://<%= application %>;
+                                             break;
+                            }
+              }
+
+              error_page   500 502 503 504  /50x.html;
+              location = /50x.html {
+                root   html;
+              }
+
+  }
+<% end %>
+

@@ -15,16 +15,17 @@ namespace :thin do
   desc "start thin"
   task :start, :roles => :app do
     sudo "/etc/init.d/thin start"
+    sudo "/usr/bin/ruby /usr/bin/thin start -C /etc/thin/#{application}.yml"
   end
   
-  desc "start thin"
+  desc "stop thin"
   task :stop, :roles => :app do
-    sudo "/etc/init.d/thin stop"
+    sudo "/usr/bin/ruby /usr/bin/thin stop -C /etc/thin/#{application}.yml"
   end
   
   desc "restart thin" 
   task :restart, :roles => :app do
-    sudo "/etc/init.d/thin restart"
+    sudo "/usr/bin/ruby /usr/bin/thin restart -C /etc/thin/#{application}.yml"
   end
 
   

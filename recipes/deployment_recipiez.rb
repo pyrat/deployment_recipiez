@@ -116,8 +116,8 @@ namespace :recipiez do
     desc "Push up the db"
     task :push do
       filename = get_filename(application)
-      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
-      cmd += " -p#{db_password} "
+      cmd = "mysqldump --opt --skip-add-locks -u #{db_local_user} "
+      cmd += " -p#{db_local_password} "
       cmd += "#{db_dev} > #{dump_dir}#{filename}"
       puts "Running #{cmd}"
       `#{cmd}`

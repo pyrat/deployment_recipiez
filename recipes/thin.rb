@@ -5,9 +5,9 @@ namespace :thin do
     sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path}  --servers #{num_servers} -e #{rails_env} --port #{start_port}"
   end
   
-  desc "configures thin with rackup eg. Sinatra. Requires thin_port"
+  desc "configures thin with rackup eg. Sinatra. Requires thin_port, rack_env"
   task :configure_rack, :roles => :app do
-    sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path} --servers 1 --port #{thin_port} -R #{current_path}/config.ru"
+    sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path} --servers 1 --port #{thin_port} -e #{rack_env} -R #{current_path}/config.ru"
   end
   
   desc "install thin"

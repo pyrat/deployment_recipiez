@@ -7,7 +7,7 @@ namespace :thin do
   
   desc "configures thin with rackup eg. Sinatra. Requires thin_port, rack_env"
   task :configure_rack, :roles => :app do
-    sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path} --servers 1 --port #{thin_port} -e #{rack_env} -R #{current_path}/config.ru"
+    sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path} --servers #{num_servers} --port #{start_port} -e #{rack_env} -R #{current_path}/config.ru"
   end
   
   desc "install thin"
@@ -16,7 +16,7 @@ namespace :thin do
     sudo "thin install"
     sudo "/usr/sbin/update-rc.d -f thin defaults"
   end
-  
+    
   desc "start thin"
   task :start, :roles => :app do
     sudo "/etc/init.d/thin start"

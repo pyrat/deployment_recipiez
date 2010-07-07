@@ -7,14 +7,22 @@ upstream <%= application %> {
     }
 
 server {
+            <% if defined?(web_port) %>
+            listen <%= web_port %>;
+            <% else %>
             listen   80;
+            <% end %>
             server_name  www.<%= domain %>;
             rewrite ^/(.*) http://<%= domain %> permanent;
            }
 
 
 server {
+            <% if defined?(web_port) %>
+            listen <%= web_port %>;
+            <% else %>
             listen   80;
+            <% end %>
             server_name <%= domain %>;
 
             access_log <%= current_path %>/log/access.log;

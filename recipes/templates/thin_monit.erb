@@ -1,5 +1,5 @@
 <% i = 0 %>
-<% start_port.up_to(start_port + num_servers) do |port| %>
+<% start_port.upto(start_port + (num_servers - 1)) do |port| %>
 
 check process <%= application %>_<%= port %>
     with pidfile <%= shared_path %>/pids/thin.<%= port %>.pid

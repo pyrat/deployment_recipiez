@@ -1,0 +1,16 @@
+<% i = 0 %>
+<% start_port.up_to(start_port + num_servers) do |port| %>
+
+check process <%= application %>_<%= port %>
+    with pidfile <%= shared_path %>/pids/thin.<%= port %>.pid
+    start program = "/usr/bin/ruby /usr/bin/thin start -C /etc/thin/<%= application %>.yml --only <%= i %>"
+    stop program = "/usr/bin/ruby /usr/bin/thin stop -C /etc/thin/<%= application %>.yml --only <%= i %>"
+    if totalmem > 120.0 MB for 5 cycles then restart
+    if failed port <%= port %> then restart
+    if cpu usage > 95% for 3 cycles then restart
+    if 5 restarts within 5 cycles then timeout
+    if failed host 127.0.0.1 port <%= port %> protocol http
+        and request "/" then alert
+    group <%= application %>
+    <% i += 1 %>
+<% end %>

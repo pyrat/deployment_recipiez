@@ -29,8 +29,8 @@ server {
             # this rewrites all the requests to the maintenance.html
             # page if it exists in the doc root. This is for capistrano's
             # disable web task
-            if (-f $document_root/system/maintenance.html) {
-              rewrite ^(.*)$ /system/maintenance.html last;
+            if (-f $document_root/maintenance.html) {
+              rewrite ^(.*)$ /maintenance.html last;
               break;
             }
             
@@ -90,8 +90,8 @@ server {
               # this rewrites all the requests to the maintenance.html
               # page if it exists in the doc root. This is for capistrano's
               # disable web task
-              if (-f $document_root/system/maintenance.html) {
-                rewrite ^(.*)$ /system/maintenance.html last;
+              if (-f $document_root/maintenance.html) {
+                rewrite ^(.*)$ /maintenance.html last;
                 break;
               }
               

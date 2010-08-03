@@ -96,7 +96,7 @@ namespace :recipiez do
       cmd += "#{database_to_dump} > #{archive}"
       result = run(cmd)
 
-      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
+      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
       puts "running #{cmd}"
       result = system(cmd)
       puts result
@@ -215,7 +215,9 @@ def get_identities
   op = ''
   if ssh_options[:keys] && ssh_options[:keys].any?
     ssh_options[:keys].each do |priv_key|
-      op += "-i #{priv_key} "
+      if File.exists?(priv_key)
+        op += "-i #{priv_key} "
+      end
     end
   end
   op

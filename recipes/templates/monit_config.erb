@@ -1,0 +1,7 @@
+set daemon  60
+set logfile syslog facility log_daemon
+set mailserver localhost
+set mail-format { from: <%= monit_from_address %> }
+set alert <%= monit_alert_address %>
+
+include /etc/monit/conf.d/*

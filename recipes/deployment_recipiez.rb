@@ -134,7 +134,16 @@ namespace :recipiez do
       run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
       run "rm #{filename}"
     end
-
+    
+    
+    desc "Create database, user and priviledges NB: Requires db_root_password"
+    task :setup do
+      sudo "mysqladmin -u root -p#{db_root_password} create #{database_to_dump}"
+      run mysql_query("CREATE USER '#{db_user}'@'localhost' IDENTIFIED BY '#{db_password}';")
+      grant_sql = "GRANT ALL PRIVILEGES ON #{database_to_dump}.* TO #{db_user}@localhost IDENTIFIED BY '#{db_password}'; FLUSH PRIVILEGES;"
+      run mysql_query(grant_sql)
+    end
+    
   end
 
   desc "pull db and system files"
@@ -183,12 +192,20 @@ namespace :recipiez do
     sudo "a2ensite #{application}"
     sudo "/etc/init.d/apache2 reload"
   end
+
+  
+
 end
 
 namespace :deploy do
   task :restart do
     # override this task
   end
+end
+
+# Internal helper to shell out and run a query. Doesn't select a database.
+def mysql_query(sql)
+  "/usr/bin/mysql -u root -p#{db_root_password} -e \"#{sql}\""
 end
 
 

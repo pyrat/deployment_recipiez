@@ -96,7 +96,7 @@ namespace :recipiez do
       cmd += "#{database_to_dump} > #{archive}"
       result = run(cmd)
 
-      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
+      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
       puts "running #{cmd}"
       result = system(cmd)
       puts result
@@ -116,8 +116,8 @@ namespace :recipiez do
     desc "Push up the db"
     task :push do
       filename = get_filename(application)
-      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
-      cmd += " -p#{db_password} "
+      cmd = "mysqldump --opt --skip-add-locks -u #{db_local_user} "
+      cmd += " -p#{db_local_password} "
       cmd += "#{db_dev} > #{dump_dir}#{filename}"
       puts "Running #{cmd}"
       `#{cmd}`
@@ -134,7 +134,16 @@ namespace :recipiez do
       run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
       run "rm #{filename}"
     end
-
+    
+    
+    desc "Create database, user and priviledges NB: Requires db_root_password"
+    task :setup do
+      sudo "mysqladmin -u root -p#{db_root_password} create #{database_to_dump}"
+      run mysql_query("CREATE USER '#{db_user}'@'localhost' IDENTIFIED BY '#{db_password}';")
+      grant_sql = "GRANT ALL PRIVILEGES ON #{database_to_dump}.* TO #{db_user}@localhost IDENTIFIED BY '#{db_password}'; FLUSH PRIVILEGES;"
+      run mysql_query(grant_sql)
+    end
+    
   end
 
   desc "pull db and system files"
@@ -183,12 +192,20 @@ namespace :recipiez do
     sudo "a2ensite #{application}"
     sudo "/etc/init.d/apache2 reload"
   end
+
+  
+
 end
 
 namespace :deploy do
   task :restart do
     # override this task
   end
+end
+
+# Internal helper to shell out and run a query. Doesn't select a database.
+def mysql_query(sql)
+  "/usr/bin/mysql -u root -p#{db_root_password} -e \"#{sql}\""
 end
 
 
@@ -215,7 +232,9 @@ def get_identities
   op = ''
   if ssh_options[:keys] && ssh_options[:keys].any?
     ssh_options[:keys].each do |priv_key|
-      op += "-i #{priv_key} "
+      if File.exists?(priv_key)
+        op += "-i #{priv_key} "
+      end
     end
   end
   op

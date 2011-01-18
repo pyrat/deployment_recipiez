@@ -7,14 +7,16 @@ upstream <%= application %> {
     }
 
 server {
-            listen   80;
+
+            listen <%= web_port ? web_port : 80 %>;
             server_name  www.<%= domain %>;
             rewrite ^(.*) http://<%= domain %>$1 permanent;
            }
 
 
 server {
-            listen   80;
+
+            listen <%= web_port ? web_port : 80 %>;
             server_name <%= domain %>;
 
             access_log <%= current_path %>/log/access.log;
@@ -27,8 +29,8 @@ server {
             # this rewrites all the requests to the maintenance.html
             # page if it exists in the doc root. This is for capistrano's
             # disable web task
-            if (-f $document_root/system/maintenance.html) {
-              rewrite ^(.*)$ /system/maintenance.html last;
+            if (-f $document_root/maintenance.html) {
+              rewrite ^(.*)$ /maintenance.html last;
               break;
             }
             
@@ -88,8 +90,8 @@ server {
               # this rewrites all the requests to the maintenance.html
               # page if it exists in the doc root. This is for capistrano's
               # disable web task
-              if (-f $document_root/system/maintenance.html) {
-                rewrite ^(.*)$ /system/maintenance.html last;
+              if (-f $document_root/maintenance.html) {
+                rewrite ^(.*)$ /maintenance.html last;
                 break;
               }
               

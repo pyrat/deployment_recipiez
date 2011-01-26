@@ -149,18 +149,25 @@ namespace :recipiez do
   desc "pull db and system files"
   task :pull_remote do
     db::pull
-    rsync_system_dir
+    rsync::pull
   end
+  
+  
+  namespace :rsync do
+    
+    desc "Rsync the shared system dir"
+    task :pull do
+      `rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{shared_path}/system/ public/system/`
+    end
 
-  desc "Rsync the shared system dir"
-  task :rsync_system_dir do
-    `rsync -av -e \"ssh -p #{ssh_options[:port]}\" #{user}@#{roles[:db].servers.first}:#{shared_path}/system/ public/system/`
+    desc "Sync up the system directory"
+    task :push do
+      system "rsync -vrz -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" --exclude='.DS_Store' public/system/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system"
+    end
+    
   end
-
-  desc "Sync up the system directory"
-  task :push_system do
-    system "rsync -vrz -e \"ssh -p #{ssh_options[:port]}\" --exclude='.DS_Store' public/system/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system"
-  end
+  
+  
 
   desc "Setup the deployment directories and fix permissions"
   task :setup do

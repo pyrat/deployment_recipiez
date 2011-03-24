@@ -86,9 +86,9 @@ namespace :recipiez do
 
   namespace :db do
 
-
     desc "Dump database, copy it across and restore locally."
     task :pull do
+      set_variables_from_yaml
       archive = generate_archive(application)
       filename = get_filename(application)
       cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
@@ -115,6 +115,7 @@ namespace :recipiez do
 
     desc "Push up the db"
     task :push do
+      set_variables_from_yaml
       filename = get_filename(application)
       cmd = "mysqldump --opt --skip-add-locks -u #{db_local_user} "
       cmd += " -p#{db_local_password} "
@@ -134,16 +135,17 @@ namespace :recipiez do
       run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
       run "rm #{filename}"
     end
-    
-    
+
+
     desc "Create database, user and priviledges NB: Requires db_root_password"
     task :setup do
+      set_variables_from_yaml
       sudo "mysqladmin -u root -p#{db_root_password} create #{database_to_dump}"
       run mysql_query("CREATE USER '#{db_user}'@'localhost' IDENTIFIED BY '#{db_password}';")
       grant_sql = "GRANT ALL PRIVILEGES ON #{database_to_dump}.* TO #{db_user}@localhost IDENTIFIED BY '#{db_password}'; FLUSH PRIVILEGES;"
       run mysql_query(grant_sql)
     end
-    
+
   end
 
   desc "pull db and system files"
@@ -151,10 +153,10 @@ namespace :recipiez do
     db::pull
     rsync::pull
   end
-  
-  
+
+
   namespace :rsync do
-    
+
     desc "Rsync the shared system dir"
     task :pull do
       `rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{shared_path}/system/ public/system/`
@@ -164,10 +166,10 @@ namespace :recipiez do
     task :push do
       system "rsync -vrz -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" --exclude='.DS_Store' public/system/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system"
     end
-    
+
   end
-  
-  
+
+
 
   desc "Setup the deployment directories and fix permissions"
   task :setup do
@@ -200,7 +202,7 @@ namespace :recipiez do
     sudo "/etc/init.d/apache2 reload"
   end
 
-  
+
 
 end
 
@@ -262,5 +264,14 @@ def format_svn_log(current_revision, previous_revision)
     end.join("\n")
   rescue
     %x( svn log --revision #{current_revision}:#{previous_revision} )
+  end
+end
+
+
+def set_variables_from_yaml
+  global = YAML.load_file("config/recipiez.yml")
+  app_config = global[rails_env]
+  app_config.each_pair do |key, value|
+    set key.to_sym, value
   end
 end

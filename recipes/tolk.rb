@@ -10,6 +10,4 @@ namespace :tolk do
     run "cd #{current_path};rake tolk:dump_all RAILS_ENV=#{rails_env}"
   end
   
-  
-  
 end

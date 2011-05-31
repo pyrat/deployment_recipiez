@@ -1,10 +1,10 @@
 $LOAD_PATH << File.dirname(__FILE__) + '/../lib'
 require 'basecamp_notifier'
+require 'activecollab_notifier'
 
 # A collection of reusable deployment tasks.
 # Hook them into your deploy script with the *after* function.
 # Author: Alastair Brunton
-
 
 namespace :recipiez do
 
@@ -28,8 +28,18 @@ namespace :recipiez do
     basecamp_auth, current_revision, get_rev_log)
     basecamp_notifier.notify
   end
+  
+  # You need to add the below line to your deploy.rb
+  # set :activecollab_options, {:base_url => "http://projects.bla.com", 
+  #      :project_id => 5, :ticket_id => 10, 
+  #      :username => 'bla', :password => 'bla'}
+  desc "Update activecollab with information of the deployment."
+  task :update_activecollab do
+    notifier = ActiveCollab::Notifier.new(activecollab_options)
+    notifier.say(get_rev_log)
+  end
 
-  desc "This gets the revision log - svn only at the moment"
+  desc "This gets the revision log"
   task :get_rev_log do
     grab_revision_log
   end

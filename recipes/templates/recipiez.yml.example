@@ -1,0 +1,8 @@
+production:
+    db_user: root
+    db_password: password
+    db_local_user: root
+    db_local_password: password
+    dump_dir: /tmp
+    database_to_dump: dbname_production
+    db_dev: dbname_development

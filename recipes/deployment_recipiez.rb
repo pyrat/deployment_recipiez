@@ -7,7 +7,17 @@ require 'activecollab_notifier'
 # Author: Alastair Brunton
 
 namespace :recipiez do
-
+  
+  desc "generate config file used for db syncing etc"
+  task :generate_config do
+    if File.exists?('config/recipiez.yml')
+      puts "Skipping config generation as one exists"
+    else
+      `cp vendor/plugins/deployment_recipiez/recipies/templates/recipiez.yml.example config/recipiez.yml`
+    end
+  end
+  
+  
   desc "Rename db file for deployment."
   task :rename_db_file do
     run "cp #{release_path}/config/database.#{rails_env} #{release_path}/config/database.yml"
@@ -279,6 +289,11 @@ end
 
 
 def set_variables_from_yaml
+  
+  unless File.exists?("config/recipiez.yml")
+    raise StandardError, "You need a config/recipiez.yml file which defines the database syncing settings. Run recipiez:generate_config"
+  end
+  
   global = YAML.load_file("config/recipiez.yml")
   app_config = global[rails_env]
   app_config.each_pair do |key, value|

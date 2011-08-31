@@ -59,11 +59,6 @@ namespace :recipiez do
     run "touch #{current_release}/tmp/restart.txt"
   end
 
-  desc "Upload contents of local system dir"
-  task :upload_system do
-    puts "Uploading system directory.."
-    system "rsync -vr --exclude='.DS_Store' -e \"ssh -p #{ssh_options[:port]}\" public/system #{user}@#{domain}:#{shared_path}/"
-  end
 
   desc "Restart mongrel."
   task :single_mongrel_restart do
@@ -209,7 +204,7 @@ namespace :recipiez do
     CMD
     sudo "chown -R #{user}:#{user} /var/www/apps"
   end
-  
+    
   desc "Add user to www-data group"
   task :www_group do
     sudo "sudo usermod -a -G www-data #{user}"
@@ -235,8 +230,8 @@ namespace :recipiez do
       RailsEnv <%= rails_env %>
       
       <Directory <%= deploy_to %>/current/public>
-        AllowOverride all              # <-- relax Apache security settings
-        Options -MultiViews            # <-- MultiViews must be turned off
+        AllowOverride all
+        Options -MultiViews
       </Directory>
       
       </VirtualHost>

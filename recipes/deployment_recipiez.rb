@@ -188,8 +188,33 @@ namespace :recipiez do
     end
 
   end
-
-
+  
+  desc "Install bundler"
+  task :bundler do
+    sudo "gem install bundler --no-rdoc --no-ri"
+  end
+  
+  desc "Install libxml and headers"
+  task :libxml do
+    sudo "apt-get install -y libxml2 libxml2-dev libxslt1-dev"
+  end
+  
+  
+  desc "Setup /var/www/apps"
+  task :app_dir do
+    sudo <<-CMD 
+      if [ ! -d "/var/www/apps" ]; then
+        sudo mkdir -p /var/www/apps
+      fi
+    CMD
+    sudo "chown -R #{user}:#{user} /var/www/apps"
+  end
+  
+  desc "Add user to www-data group"
+  task :www_group do
+    sudo "sudo usermod -a -G www-data #{user}"
+    sudo "sudo usermod -a -G #{user} www-data"
+  end
 
   desc "Setup the deployment directories and fix permissions"
   task :setup do
@@ -208,7 +233,12 @@ namespace :recipiez do
 
       DocumentRoot <%= deploy_to %>/current/public
       RailsEnv <%= rails_env %>
-
+      
+      <Directory <%= deploy_to %>/current/public>
+        AllowOverride all              # <-- relax Apache security settings
+        Options -MultiViews            # <-- MultiViews must be turned off
+      </Directory>
+      
       </VirtualHost>
     }
 

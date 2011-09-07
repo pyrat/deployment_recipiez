@@ -3,6 +3,11 @@ namespace :apache do
   
   desc "Rails Passenger Vhost Setup"
   task :php_vhost do
+    
+    unless apache_port
+      set :apache_port, '80'
+    end
+    
     logger.info "generating .conf file"
     logger.info "placing #{application}.conf on remote server"
     apache_conf = "/etc/apache2/sites-available/#{application}"

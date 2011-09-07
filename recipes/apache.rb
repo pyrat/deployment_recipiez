@@ -15,7 +15,7 @@ namespace :apache do
   desc "PHP Vhost Setup"
    task :php_vhost do
 
-     unless apache_port
+     unless defined? apache_port
        set :apache_port, '80'
      end
 

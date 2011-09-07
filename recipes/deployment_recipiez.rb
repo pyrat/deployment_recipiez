@@ -217,38 +217,6 @@ namespace :recipiez do
     sudo "chown -R #{user}:#{user} #{deploy_to}"
   end
 
-  desc "Setup apache vhost"
-  task :apache_setup do
-    logger.info "generating .conf file"
-    apache_conf = "/etc/apache2/sites-available/#{application}"
-    template_file = %q{
-      <VirtualHost *:80>
-      ServerName <%= app_domain %>
-      ServerAlias www.<%= app_domain %>
-
-      DocumentRoot <%= deploy_to %>/current/public
-      RailsEnv <%= rails_env %>
-      
-      <Directory <%= deploy_to %>/current/public>
-        AllowOverride all
-        Options -MultiViews
-      </Directory>
-      
-      </VirtualHost>
-    }
-
-    require 'erb'
-
-    config = ERB.new(template_file)
-    put config.result(binding), "#{application}.conf"
-    logger.info "placing #{application}.conf on remote server"
-    sudo "mv #{application}.conf #{apache_conf}"
-    sudo "a2ensite #{application}"
-    sudo "/etc/init.d/apache2 reload"
-  end
-
-
-
 end
 
 namespace :deploy do

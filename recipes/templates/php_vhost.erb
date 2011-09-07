@@ -1,0 +1,12 @@
+<VirtualHost *:<%= apache_port || 80 %>>
+ServerName <%= app_domain %>
+ServerAlias www.<%= app_domain %>
+
+DocumentRoot <%= deploy_to %>/current/public
+
+<Directory <%= deploy_to %>/current/public>
+  AllowOverride all
+  Options -MultiViews
+</Directory>
+
+</VirtualHost>

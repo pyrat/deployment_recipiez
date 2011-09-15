@@ -1,0 +1,13 @@
+h1. Deployment Recipiez
+
+A collection of capistrano recipes for doing a whole host of things to servers.
+
+* Apache vhosts
+* Logrotate
+* Monit
+* Nginx Vhost
+* Database syncing
+* Rsyncing
+* Chef
+* Php Vhost
+* Thin Setup

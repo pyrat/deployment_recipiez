@@ -6,8 +6,10 @@ require 'activecollab_notifier'
 # Hook them into your deploy script with the *after* function.
 # Author: Alastair Brunton
 
+Capistrano::Configuration.instance(true).load do
+
 namespace :recipiez do
-  
+
   desc "generate config file used for db syncing etc"
   task :generate_config do
     if File.exists?('config/recipiez.yml')
@@ -16,8 +18,8 @@ namespace :recipiez do
       `cp vendor/plugins/deployment_recipiez/recipes/templates/recipiez.yml.example config/recipiez.yml`
     end
   end
-  
-  
+
+
   desc "Rename db file for deployment."
   task :rename_db_file do
     run "cp #{release_path}/config/database.#{rails_env} #{release_path}/config/database.yml"
@@ -38,10 +40,10 @@ namespace :recipiez do
     basecamp_auth, current_revision, get_rev_log)
     basecamp_notifier.notify
   end
-  
+
   # You need to add the below line to your deploy.rb
-  # set :activecollab_options, {:base_url => "http://projects.bla.com", 
-  #      :project_id => 5, :ticket_id => 10, 
+  # set :activecollab_options, {:base_url => "http://projects.bla.com",
+  #      :project_id => 5, :ticket_id => 10,
   #      :username => 'bla', :password => 'bla'}
   desc "Update activecollab with information of the deployment."
   task :update_activecollab do
@@ -183,46 +185,48 @@ namespace :recipiez do
     end
 
   end
-  
+
   desc "Install bundler"
   task :bundler do
     sudo "gem install bundler --no-rdoc --no-ri"
   end
-  
+
   desc "Install libxml and headers"
   task :libxml do
     sudo "apt-get install -y libxml2 libxml2-dev libxslt1-dev"
   end
-  
-  
+
+
   desc "Setup /var/www/apps"
   task :app_dir do
-    sudo <<-CMD 
-      if [ ! -d "/var/www/apps" ]; then
-        sudo mkdir -p /var/www/apps
+    sudo <<-CMD
+    if [ ! -d "/var/www/apps" ]; then
+      sudo mkdir -p /var/www/apps
       fi
-    CMD
-    sudo "chown -R #{user}:#{user} /var/www/apps"
-  end
-    
-  desc "Add user to www-data group"
-  task :www_group do
-    sudo "sudo usermod -a -G www-data #{user}"
-    sudo "sudo usermod -a -G #{user} www-data"
+      CMD
+      sudo "chown -R #{user}:#{user} /var/www/apps"
+    end
+
+    desc "Add user to www-data group"
+    task :www_group do
+      sudo "sudo usermod -a -G www-data #{user}"
+      sudo "sudo usermod -a -G #{user} www-data"
+    end
+
+    desc "Setup the deployment directories and fix permissions"
+    task :setup do
+      deploy::setup
+      sudo "chown -R #{user}:#{user} #{deploy_to}"
+    end
+
   end
 
-  desc "Setup the deployment directories and fix permissions"
-  task :setup do
-    deploy::setup
-    sudo "chown -R #{user}:#{user} #{deploy_to}"
+  namespace :deploy do
+    task :restart do
+      # override this task
+    end
   end
 
-end
-
-namespace :deploy do
-  task :restart do
-    # override this task
-  end
 end
 
 # Internal helper to shell out and run a query. Doesn't select a database.
@@ -282,11 +286,11 @@ end
 
 
 def set_variables_from_yaml
-  
+
   unless File.exists?("config/recipiez.yml")
     raise StandardError, "You need a config/recipiez.yml file which defines the database syncing settings. Run recipiez:generate_config"
   end
-  
+
   global = YAML.load_file("config/recipiez.yml")
   app_config = global[rails_env]
   app_config.each_pair do |key, value|

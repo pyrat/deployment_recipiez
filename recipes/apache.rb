@@ -24,6 +24,10 @@ Capistrano::Configuration.instance(true).load do
       unless defined? allowed_ips
         set :allowed_ips, []
       end
+      
+      unless defined? server_aliases
+        set :server_aliases, []
+      end
 
       logger.info "generating .conf file"
       logger.info "placing #{application}.conf on remote server"

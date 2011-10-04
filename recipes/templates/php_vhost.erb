@@ -1,5 +1,8 @@
 <VirtualHost *:80>
 ServerName <%= app_domain %>
+<% if server_aliases.length > 0 %>
+ServerAlias <%= server_aliases.join(" ") %>
+<% end %>
 
 DocumentRoot <%= deploy_to %>/current/public
 

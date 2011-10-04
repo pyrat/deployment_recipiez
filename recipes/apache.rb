@@ -20,6 +20,10 @@ Capistrano::Configuration.instance(true).load do
       unless defined? apache_port
         set :apache_port, '80'
       end
+      
+      unless defined? allowed_ips
+        set :allowed_ips, []
+      end
 
       logger.info "generating .conf file"
       logger.info "placing #{application}.conf on remote server"

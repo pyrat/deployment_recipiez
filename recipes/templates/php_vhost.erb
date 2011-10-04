@@ -1,12 +1,14 @@
-<VirtualHost *:<%= apache_port %>>
+<VirtualHost *:80>
 ServerName <%= app_domain %>
-ServerAlias www.<%= app_domain %>
 
 DocumentRoot <%= deploy_to %>/current/public
 
 <Directory <%= deploy_to %>/current/public>
   AllowOverride all
-  Options -MultiViews
+  <% if allowed_ips.length > 0 %>
+  Allow from <%= allowed_ips.join(" ") %>
+  <% end %>
+  Options -Indexes
 </Directory>
 
 </VirtualHost>

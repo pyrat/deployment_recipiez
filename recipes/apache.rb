@@ -17,15 +17,15 @@ Capistrano::Configuration.instance(true).load do
     desc "PHP Vhost Setup"
     task :php_vhost do
 
-      unless defined? apache_port
+      unless exists? :apache_port
         set :apache_port, '80'
       end
       
-      unless defined? allowed_ips
+      unless exists? :allowed_ips
         set :allowed_ips, []
       end
       
-      unless defined? server_aliases
+      unless exists? :server_aliases
         set :server_aliases, []
       end
 

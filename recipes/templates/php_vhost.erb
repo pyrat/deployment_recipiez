@@ -4,6 +4,9 @@ ServerName <%= app_domain %>
 ServerAlias <%= server_aliases.join(" ") %>
 <% end %>
 
+CustomLog     /var/log/apache2/<%= app_domain %>-access.log combined
+ErrorLog      /var/log/apache2/<%= app_domain %>-error.log
+
 DocumentRoot <%= deploy_to %>/current/public
 
 <Directory <%= deploy_to %>/current/public>

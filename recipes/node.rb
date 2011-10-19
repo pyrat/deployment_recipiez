@@ -11,6 +11,7 @@ Capistrano::Configuration.instance(true).load do
       put render("upstart", binding), "#{application}.conf"
       sudo "mv #{application}.conf /etc/init/#{application}.conf"
     end
+    
 
   end
 

@@ -22,6 +22,30 @@ Capistrano::Configuration.instance(true).load do
         # do nothing
       end
     end
+    
+    
+    desc "Generates a simple proxy configuration for a nodejs application"
+    task :nodejs do
+      put render("nginx_node", binding), "#{application}.conf"
+      sudo "mv #{application}.conf /etc/nginx/sites-available/#{application}.conf"
+      begin
+        sudo "ln -s /etc/nginx/sites-available/#{application}.conf /etc/nginx/sites-enabled/#{application}.conf"
+      rescue
+        # do nothing
+      end
+
+      begin
+        stop
+      rescue
+        # do nothing
+      end
+
+      begin
+        start
+      rescue
+        # do nothing
+      end
+    end
 
     desc "Starts Nginx webserver"
     task :start, :roles => :web do

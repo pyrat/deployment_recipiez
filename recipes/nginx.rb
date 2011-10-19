@@ -26,6 +26,11 @@ Capistrano::Configuration.instance(true).load do
     
     desc "Generates a simple proxy configuration for a nodejs application"
     task :nodejs do
+      
+      unless exists? :node_port
+        set :node_port, 3000
+      end
+      
       put render("nginx_node", binding), "#{application}.conf"
       sudo "mv #{application}.conf /etc/nginx/sites-available/#{application}.conf"
       begin

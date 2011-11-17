@@ -14,5 +14,13 @@ Capistrano::Configuration.instance(true).load do
     
 
   end
+  
+  
+  namespace :npm do
+    task :install do
+      run "cd #{release_path} && npm install"
+    end
+  end
+  
 
 end

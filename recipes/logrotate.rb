@@ -3,10 +3,8 @@ Capistrano::Configuration.instance(true).load do
   namespace :logrotate do
     desc "Configures logrotate for the application"
     task :configure, :roles => [:app, :web] do
-
-      unless exists? :log_directory
-        set :log_directory, 'log'
-      end
+      
+      _cset :log_directory, 'log'
 
       generated = render('logrotate', binding)
       puts generated

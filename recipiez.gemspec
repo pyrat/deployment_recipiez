@@ -1,16 +1,19 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
+
+require 'recipiez/version'
+
  
 Gem::Specification.new do |s|
   s.name        = "recipiez"
-  s.version     = "0.1.3"
+  s.version     = Recipiez::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Alastair Brunton"]
   s.email       = ["info@simplyexcited.co.uk"]
   s.homepage    = "http://github.com/pyrat/deployment_recipiez"
-  s.summary     = "Collection of capistrano recipies which do good things."
-  s.description = "DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit"
+  s.summary     = "Cap recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
+  s.description = "Cap recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
   
   s.add_dependency('xml-simple')
   s.add_dependency('mechanize')

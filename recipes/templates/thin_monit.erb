@@ -3,8 +3,8 @@
 
 check process <%= application %>_<%= port %>
     with pidfile <%= shared_path %>/pids/thin.<%= port %>.pid
-    start program = "/usr/bin/ruby /usr/bin/thin start -C /etc/thin/<%= application %>.yml --only <%= i %>"
-    stop program = "/usr/bin/ruby /usr/bin/thin stop -C /etc/thin/<%= application %>.yml --only <%= i %>"
+    start program = "/bin/sh -c 'cd <%= current_path %> && /usr/bin/bundle exec thin start -C /etc/thin/<%= application %>.yml --only <%= i %>'"
+    stop program = "/bin/sh -c 'cd <%= current_path %> && /usr/bin/bundle exec thin stop -C /etc/thin/<%= application %>.yml --only <%= i %>'"
     if totalmem > 120.0 MB for 5 cycles then restart
     if failed port <%= port %> then restart
     if cpu usage > 95% for 3 cycles then restart

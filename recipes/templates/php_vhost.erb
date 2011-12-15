@@ -41,15 +41,4 @@ DocumentRoot <%= deploy_to %>/current/public
   
 </VirtualHost>
 
-<% end %>  
-  
-  
-    DocumentRoot /var/www-apps/activecollab/public
-
-    SSLEngine on
-    SSLCertificateFile    /etc/apache2/ssl/project.blissio.com.crt
-    SSLCertificateKeyFile /etc/apache2/ssl/project.blissio.com.key
-    SSLCertificateChainFile /etc/apache2/ssl/globalsign.roots.crt
-    SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
-
-    RewriteEngine On
+<% end %>

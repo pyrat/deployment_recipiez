@@ -19,7 +19,7 @@ Capistrano::Configuration.instance(true).load do
       put File.read(ssl_key_path), File.basename(ssl_key_path)
       
       if exists? :ssl_chain_path
-        File.read(ssl_chain_path), File.basename(ssl_chain_path)
+        put File.read(ssl_chain_path), File.basename(ssl_chain_path)
         sudo "mv #{File.basename(ssl_chain_path)} #{base_cert_path}/#{File.basename(ssl_chain_path)}"
       end
 

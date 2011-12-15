@@ -16,19 +16,13 @@ Capistrano::Configuration.instance(true).load do
 
     desc "PHP Vhost Setup"
     task :php_vhost do
-
-      unless exists? :apache_port
-        set :apache_port, '80'
-      end
       
-      unless exists? :allowed_ips
-        set :allowed_ips, []
-      end
+      _cset :apache_port, '80'
+      _cset :allowed_ips, []
+      _cset :server_aliases, []
+      _cset :ssl, 'off'
+      _cset :ssl_chain, 'none'
       
-      unless exists? :server_aliases
-        set :server_aliases, []
-      end
-
       logger.info "generating .conf file"
       logger.info "placing #{application}.conf on remote server"
       apache_conf = "/etc/apache2/sites-available/#{application}"

@@ -18,3 +18,38 @@ DocumentRoot <%= deploy_to %>/current/public
 </Directory>
 
 </VirtualHost>
+
+
+<% if ssl == 'on' %>
+
+<VirtualHost *:443>
+  ServerName <%= app_domain %>
+  
+  CustomLog     /var/log/apache2/<%= app_domain %>-access.log combined
+  ErrorLog      /var/log/apache2/<%= app_domain %>-error.log
+  DocumentRoot <%= deploy_to %>/current/public
+  
+  SSLEngine on
+  SSLCertificateFile    <%= ssl_cert %>
+  SSLCertificateKeyFile <%= ssl_key %>
+  
+  <% if ssl_chain != 'none' %>
+  SSLCertificateChainFile <%= ssl_chain %>
+  <% end %>
+  
+  SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+  
+</VirtualHost>
+
+<% end %>  
+  
+  
+    DocumentRoot /var/www-apps/activecollab/public
+
+    SSLEngine on
+    SSLCertificateFile    /etc/apache2/ssl/project.blissio.com.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/project.blissio.com.key
+    SSLCertificateChainFile /etc/apache2/ssl/globalsign.roots.crt
+    SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+
+    RewriteEngine On

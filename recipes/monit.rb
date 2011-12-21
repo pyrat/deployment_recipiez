@@ -43,6 +43,13 @@ Capistrano::Configuration.instance(true).load do
       sudo "chown root:root /etc/monit/monitrc"
       sudo "/etc/init.d/monit restart"
     end
+    
+    desc "configures monit for node"
+    task :node, :roles => :web do
+      put render('node_monit', binding), "node_monit.conf"
+      sudo "mv node_monit.conf /etc/monit/conf.d/node_monit_#{application}.conf"
+      sudo "/etc/init.d/monit restart"
+    end
 
 
   end

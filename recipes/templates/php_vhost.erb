@@ -32,13 +32,12 @@ DocumentRoot <%= deploy_to %>/current/public
   SSLEngine on
   SSLCertificateFile    <%= ssl_cert %>
   SSLCertificateKeyFile <%= ssl_key %>
-  
-  <% if ssl_chain != 'none' %>
   SSLCertificateChainFile <%= ssl_chain %>
-  <% end %>
+
   
   SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
   
 </VirtualHost>
 
 <% end %>
+

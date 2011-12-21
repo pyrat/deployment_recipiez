@@ -10,6 +10,7 @@ respawn                # restart when job dies
 respawn limit 5 60     # give up restart after 5 respawns in 60 seconds
 
 script
+  echo $$ > /var/run/<%= application %>.pid
   exec sudo -u <%= user %> NODE_ENV=<%= node_env %> node <%= current_path %>/app/app.js >> <%= current_path %>/log/<%= node_env %>.log 2>&1
 end script
 

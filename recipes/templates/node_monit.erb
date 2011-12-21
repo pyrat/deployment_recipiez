@@ -1,0 +1,9 @@
+# node
+check process node_<%= application %> with pidfile /var/run/<%= application %>.pid
+           start program = "/sbin/start <%= application %>"
+           stop program  = "/sbin/stop <%= application %>"
+           if cpu is greater than 40% for 2 cycles then alert
+           if cpu > 80% for 5 cycles then restart
+           if 10 restarts within 10 cycles then timeout
+           if totalmem > 150.0 MB for 5 cycles then restart
+           group node

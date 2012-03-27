@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Alastair Brunton"]
   s.email       = ["info@simplyexcited.co.uk"]
   s.homepage    = "http://github.com/pyrat/deployment_recipiez"
-  s.summary     = "Cap recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
-  s.description = "Cap recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
+  s.summary     = "Capistrano recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
+  s.description = "Capistrano recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
   
   s.add_dependency('xml-simple')
   s.add_dependency('mechanize')

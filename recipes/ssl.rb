@@ -14,8 +14,10 @@ Capistrano::Configuration.instance(true).load do
       rescue
         # ignore
       end
+      
+      upload(ssl_certs_path, base_cert_path, :via => :scp, :recursive => true)
 
-      put File.read(ssl_cert_path), File.basename(ssl_cert_path)
+      put File.read(ssl_cert_path), File.basename(ssl_cert_path
       put File.read(ssl_key_path), File.basename(ssl_key_path)
       
       if exists? :ssl_chain_path

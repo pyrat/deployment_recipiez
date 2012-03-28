@@ -26,31 +26,26 @@ server {
 
 
 <% if ssl == 'on' %>
+# https server definition, remember only one https site per IP
 
 server {
-  
-  listen 0.0.0.0:443;
-  ssl on;
-  
-  access_log /var/log/nginx/<%= application %>.log;
-  error_log /var/log/nginx/<%= application %>.log;
-  
-  ssl_certificate <%= ssl_cert %>;
-  ssl_certificate_key <%= ssl_key %>;
-  
-  # pass the request to the node.js server with the correct headers and much more can be added, see nginx config options
-  location / {
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_set_header X-NginX-Proxy true;
+      listen   443;
+      ssl on;
+    
+      ssl_certificate <%= ssl_cert %>;
+      ssl_certificate_key <%= ssl_key %>;
+    
+      access_log /var/log/nginx/<%= application %>.log;
+      error_log /var/log/nginx/<%= application %>.log;  
 
-    proxy_pass http://<%= application %>/;
-    proxy_redirect off;
+      location / {
+          proxy_set_header  X-Real-IP  $remote_addr;
+          proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header Host $http_host;
+          proxy_redirect off;
+          proxy_set_header X-FORWARDED_PROTO https;
+          proxy_max_temp_file_size 0;
+          proxy_pass http://<%= application %>;
+      }
   }
-  
-  
-}
-
-
 <% end %>

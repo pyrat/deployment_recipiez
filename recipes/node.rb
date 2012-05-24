@@ -11,6 +11,15 @@ Capistrano::Configuration.instance(true).load do
       put render("upstart", binding), "#{application}.conf"
       sudo "mv #{application}.conf /etc/init/#{application}.conf"
     end
+    
+    desc "Install the nodejs components to the server"
+    task :setup do
+      recipiez::setup
+      nginx::nodejs
+      node::generate_upstart
+      monit::node
+      logrotate::configure
+    end
 
   end
   

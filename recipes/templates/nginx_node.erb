@@ -25,7 +25,7 @@ server {
  }
 
 
-<% if ssl == 'on' %>
+<% if ssl_enabled == 'on' %>
 # https server definition, remember only one https site per IP
 
 server {
@@ -48,4 +48,6 @@ server {
           proxy_pass http://<%= application %>;
       }
   }
+<% else %>
+<%= ssl_enabled %>
 <% end %>

@@ -28,7 +28,7 @@ Capistrano::Configuration.instance(true).load do
     task :nodejs do
             
       _cset :node_port, 3000
-      _cset :ssl, 'off'
+      _cset :ssl_enabled, false
       
       
       put render("nginx_node", binding), "#{application}.conf"

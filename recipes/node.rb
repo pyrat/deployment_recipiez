@@ -19,6 +19,7 @@ Capistrano::Configuration.instance(true).load do
       node::generate_upstart
       monit::node
       logrotate::configure
+      recipiez::bundler
     end
 
   end

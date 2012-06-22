@@ -20,6 +20,7 @@ Capistrano::Configuration.instance(true).load do
       monit::node
       logrotate::configure
       recipiez::bundler
+      recipiez::libxml
     end
 
   end

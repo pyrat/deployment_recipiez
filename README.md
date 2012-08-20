@@ -12,6 +12,7 @@ A collection of capistrano recipes for doing a whole host of things to servers.
 * Php Vhost
 * Thin Setup
 * Node js deployment
+* Foreman Upstart Functionality
 
 ## Installation
 

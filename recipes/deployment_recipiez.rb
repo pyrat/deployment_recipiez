@@ -15,7 +15,7 @@ namespace :recipiez do
     if File.exists?('config/recipiez.yml')
       puts "Skipping config generation as one exists"
     else
-      `cp vendor/plugins/deployment_recipiez/recipes/templates/recipiez.yml.example config/recipiez.yml`
+      `cp #{File.dirname(__FILE__)}/templates/recipiez.yml.example config/recipiez.yml`
     end
   end
 

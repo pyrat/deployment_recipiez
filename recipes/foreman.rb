@@ -19,5 +19,11 @@ Capistrano::Configuration.instance(true).load do
     task :restart, roles: :app do
       run "sudo service #{application} start || sudo service #{application} restart"
     end
+    
+    desc "Rename Procfile for deployment."
+    task :rename_procfile do
+      run "cp #{release_path}/Procfile.#{rails_env} #{release_path}/Procfile"
+    end
+    
   end
 end

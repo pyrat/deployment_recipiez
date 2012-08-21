@@ -21,8 +21,8 @@ Capistrano::Configuration.instance(true).load do
     end
     
     desc "Rename Procfile for deployment."
-    task :rename_procfile do
-      run "cp #{release_path}/Procfile.#{rails_env} #{release_path}/Procfile"
+    task :rename_env_file do
+      run "cp #{release_path}/foreman.env.#{rails_env} #{release_path}/foreman.env"
     end
     
   end

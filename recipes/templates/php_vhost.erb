@@ -14,6 +14,11 @@ DocumentRoot <%= deploy_to %>/current/public
   <% if allowed_ips.length > 0 %>
   Allow from <%= allowed_ips.join(" ") %>
   <% end %>
+  <% if custom_envs %>
+  <% custom_envs.each_pair do |key, value| %>
+  SetEnv <%= key %> <%= value %>
+  <% end %>
+  <% end %>
   Options -Indexes
 </Directory>
 

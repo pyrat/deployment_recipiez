@@ -21,6 +21,7 @@ Capistrano::Configuration.instance(true).load do
       _cset :allowed_ips, []
       _cset :server_aliases, []
       _cset :ssl_chain, 'none'
+      _cset :custom_vars, {}
 
       unless exists? :ssl
         set :ssl, 'off'

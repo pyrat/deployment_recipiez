@@ -1,6 +1,4 @@
 $LOAD_PATH << File.dirname(__FILE__) + '/../lib'
-require 'basecamp_notifier'
-require 'activecollab_notifier'
 
 # A collection of reusable deployment tasks.
 # Hook them into your deploy script with the *after* function.
@@ -30,26 +28,7 @@ namespace :recipiez do
     run "cp #{release_path}/config/settings.yml.#{rails_env} #{release_path}/config/settings.yml"
   end
 
-  # You need to add the below line to your deploy.rb
-  # set :basecamp_auth, {:username => 'robot', :domain => 'ifo.projectpath.com',
-  #                         :password => 'robot', :project_id => 828898,
-  #                         :category_id => 15509}
-  desc "Update basecamp with information of the deployment."
-  task :update_basecamp do
-    basecamp_notifier = BasecampNotifier.new(application, rails_env,
-    basecamp_auth, current_revision, get_rev_log)
-    basecamp_notifier.notify
-  end
 
-  # You need to add the below line to your deploy.rb
-  # set :activecollab_options, {:base_url => "http://projects.bla.com",
-  #      :project_id => 5, :ticket_id => 10,
-  #      :username => 'bla', :password => 'bla'}
-  desc "Update activecollab with information of the deployment."
-  task :update_activecollab do
-    notifier = ActiveCollab::Notifier.new(activecollab_options)
-    notifier.say(get_rev_log)
-  end
 
   desc "This gets the revision log"
   task :get_rev_log do

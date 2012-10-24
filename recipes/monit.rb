@@ -8,9 +8,15 @@ Capistrano::Configuration.instance(true).load do
       sudo "mv nginx.conf /etc/monit/conf.d/nginx.conf"
       sudo "/etc/init.d/monit restart"
     end
-
+    
+    
+    # /usr/local/sbin/spawner.sh
     desc "configures monit for thin"
     task :thin, :roles => :web do
+      put render('spawner_monit', binding), "spawner.sh"
+      run "chmod +x spawner.sh"
+      sudo "mv spawner.sh /usr/local/sbin/spawner.sh"
+      
       put render('thin_monit', binding), "#{application}.conf"
       sudo "mv #{application}.conf /etc/monit/conf.d/#{application}.conf"
       sudo "/etc/init.d/monit restart"

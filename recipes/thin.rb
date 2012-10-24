@@ -34,7 +34,18 @@ Capistrano::Configuration.instance(true).load do
     task :restart, :roles => :app do
       sudo "/usr/bin/ruby /usr/bin/thin restart -C /etc/thin/#{application}.yml"
     end
-
+    
+    desc "setup thin install and loads of other goodies, one stop shop!"
+    task :setup, :roles => :app do
+      recipiez::setup
+      nginx::configure
+      logrotate::configure
+      recipiez::bundler
+      recipiez::libxml
+      thin::install
+      thin::configure
+      monit::thin
+    end
 
   end
 end

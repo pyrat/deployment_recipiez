@@ -88,7 +88,8 @@ namespace :recipiez do
       archive = generate_archive(application)
       filename = get_filename(application)
       cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
-      cmd += " -p#{db_password} "
+      cmd += " -h #{db_host} " if exists?('db_host')
+      cmd += " -p\"#{db_password}\" "
       cmd += "#{database_to_dump} > #{archive}"
       result = run(cmd)
 

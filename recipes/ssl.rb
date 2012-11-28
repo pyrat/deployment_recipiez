@@ -14,7 +14,8 @@ Capistrano::Configuration.instance(true).load do
       rescue
         # ignore
       end
-
+      
+      run "mkdir cap_certs"
       upload(ssl_certs_path, "cap_certs", :via => :scp, :recursive => true)
       sudo "cp -R cap_certs/* #{base_cert_path}"
       # Clean up the cap_certs temp dir

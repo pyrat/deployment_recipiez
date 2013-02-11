@@ -21,7 +21,6 @@ Capistrano::Configuration.instance(true).load do
       logrotate::configure
       recipiez::bundler
       recipiez::libxml
-      ssl::upload_certs
     end
 
   end

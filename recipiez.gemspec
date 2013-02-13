@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/pyrat/deployment_recipiez"
   s.summary     = "Capistrano recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
   s.description = "Capistrano recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
+
+  s.add_dependency('tinder')
     
   s.required_rubygems_version = ">= 1.3.1"
   s.require_path = 'lib'

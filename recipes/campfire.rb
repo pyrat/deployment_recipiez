@@ -1,3 +1,5 @@
+require 'tinder'
+
 Capistrano::Configuration.instance(true).load do
 
   namespace :campfire do

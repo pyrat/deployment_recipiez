@@ -133,6 +133,34 @@ namespace :recipiez do
       run "rm #{filename}"
     end
 
+    desc "Dump database structure only, copy it across and restore locally."
+    task :pull_structure do
+      set_variables_from_yaml
+      archive = generate_archive(application)
+      filename = get_filename(application)
+      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
+      cmd += " -d -h #{db_host} " if exists?('db_host')
+      cmd += " -p#{db_password} "
+      cmd += "#{database_to_dump} > #{archive}"
+      result = run(cmd)
+
+      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
+      puts "running #{cmd}"
+      result = system(cmd)
+      puts result
+      run "rm #{archive}"
+
+      puts "Restoring db"
+      begin
+        `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
+      rescue
+        # do nothing
+      end
+      `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
+      `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
+      puts "All done!"
+    end
+
 
     desc "Create database, user and priviledges NB: Requires db_root_password"
     task :setup do

@@ -11,9 +11,9 @@ Capistrano::Configuration.instance(true).load do
       announcement = "#{announced_deployer} has deployed #{application} to #{announced_stage}"
       campfire_room.speak announcement
       begin
-        command = %(git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision})
+        command = %(git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{latest_revision})
         puts command
-        rev_log = %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision} )
+        rev_log = %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{latest_revision} )
         campfire_room.paste rev_log
       rescue Faraday::Error::ParsingError
         # FIXME deal with crazy color output instead of rescuing

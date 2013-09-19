@@ -11,7 +11,7 @@ Capistrano::Configuration.instance(true).load do
       announcement = "#{announced_deployer} has deployed #{application} to #{announced_stage}"
       campfire_room.speak announcement
       begin
-        command = %w(git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision})
+        command = %(git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision})
         puts command
         rev_log = %x( git log --pretty=format:"* #{"[%h, %an] %s"}" #{previous_revision}..#{current_revision} )
         campfire_room.paste rev_log

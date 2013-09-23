@@ -10,7 +10,7 @@ server {
     server_name <%= app_domain %>;
     
     access_log /var/log/nginx/<%= application %>.log;
-    error_log /var/log/nginx/<%= application %>.log;
+    error_log /var/log/nginx/<%= application %>_error.log;
 
     # pass the request to the node.js server with the correct headers and much more can be added, see nginx config options
     location / {

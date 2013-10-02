@@ -122,14 +122,25 @@ namespace :recipiez do
       put File.read("#{dump_dir}#{filename}"), filename
       logger.debug 'Dropping db'
       begin
-        run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
+        if exists?('db_host')
+          # do nothing
+        else
+          run "mysqladmin -u#{db_user} -p#{db_password} --force drop #{database_to_dump}"
+        end
       rescue
         # do nothing
       end
-      logger.debug 'Creating db'
-      run "mysqladmin -u#{db_user} -p#{db_password} --force create #{database_to_dump}"
+      if exists?('db_host')
+        # do nothing
+      else
+        logger.debug 'Creating db'
+        run "mysqladmin -u#{db_user} -p#{db_password} --force create #{database_to_dump}"
+      end
       logger.debug 'Restoring db'
-      run "cat #{filename} | mysql -u#{db_user} -p#{db_password} #{database_to_dump}"
+      cmd = "cat #{filename} | mysql -u#{db_user} "
+      cmd += "-h #{db_host} " if exists?('db_host')
+      cmd += "-p#{db_password} #{database_to_dump}"
+      run cmd
       run "rm #{filename}"
     end
 

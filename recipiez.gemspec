@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.summary     = "Capistrano recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
   s.description = "Capistrano recipies for DB Syncing, Logrotate, Apache, Thin, Basecamp, Activecollab, Monit, NodeJS, Nginx"
 
+  s.license = 'MIT'
   s.add_dependency('tinder')
     
   s.required_rubygems_version = ">= 1.3.1"

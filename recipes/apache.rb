@@ -40,7 +40,11 @@ Capistrano::Configuration.instance(true).load do
     desc "Install mongo to php"
     task :mongo_php do
       sudo "apt-get install -y php-pear php5-dev"
-      sudo "pecl install mongo"
+      begin
+        sudo "pecl install mongo"
+      rescue
+        puts "Error installing mongo."
+      end
       put render("mongo_ini", binding), "mongo_ini"
       sudo "mv mongo_ini /etc/php5/conf.d/mongo.ini"
       sudo "/etc/init.d/apache2 reload"

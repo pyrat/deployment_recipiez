@@ -1,0 +1,19 @@
+<%= current_path %>/<%= log_directory %>/*.log {
+daily
+missingok
+rotate 28
+compress
+nodelaycompress
+notifempty
+copytruncate
+dateext
+sharedscripts
+lastaction
+  LOGDATE=$(date +"%H:%M")
+  GZREGEX="s/(.*).gz$/\$1-$LOGDATE.gz/"
+  rename $GZREGEX *.gz
+  mv <%= current_path %>/<%= log_directory %>/*.gz /mnt/archived_logs/<%= application %>/
+endscript
+}
+
+

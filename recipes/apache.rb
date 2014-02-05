@@ -37,6 +37,23 @@ Capistrano::Configuration.instance(true).load do
       sudo "/etc/init.d/apache2 reload"
     end
 
+    desc "PHP Secure Vhost Setup"
+    task :secure_php_vhost do
+
+      _cset :allowed_ips, []
+      _cset :ssl_chain, 'none'
+      _cset :custom_vars, {}
+
+      logger.info "generating .conf file"
+      logger.info "placing #{application}.conf on remote server"
+      apache_conf = "/etc/apache2/sites-available/#{application}"
+      put render("secure_php_vhost", binding), "#{application}.conf"
+      sudo "mv #{application}.conf #{apache_conf}"
+      sudo "a2ensite #{application}"
+      sudo "/etc/init.d/apache2 reload"
+    end
+
+
     desc "Install mongo to php"
     task :mongo_php do
       sudo "apt-get install -y php-pear php5-dev"

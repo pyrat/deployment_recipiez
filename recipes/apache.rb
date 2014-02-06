@@ -81,7 +81,7 @@ Capistrano::Configuration.instance(true).load do
       # Upload to /etc/apache2/ssl
       upload(ssl_certs_archive, "certs.tar.gz", :via => :scp)
       sudo "mv certs.tar.gz /etc/apache2/ssl/"
-      sudo "tar zxvf /etc/apache2/ssl/certs.tar.gz"
+      sudo "cd /etc/apache2/ssl/ && tar zxvf certs.tar.gz"
       puts "All done!"
     end
 

@@ -6,7 +6,7 @@ Capistrano::Configuration.instance(true).load do
     task :passenger_vhost do
       logger.info "generating .conf file"
       logger.info "placing #{application}.conf on remote server"
-      apache_conf = "/etc/apache2/sites-available/#{application}"
+      apache_conf = "/etc/apache2/sites-available/#{application}.conf"
       put render("passenger_vhost", binding), "#{application}.conf"
       sudo "mv #{application}.conf #{apache_conf}"
       sudo "a2ensite #{application}"
@@ -30,7 +30,7 @@ Capistrano::Configuration.instance(true).load do
 
       logger.info "generating .conf file"
       logger.info "placing #{application}.conf on remote server"
-      apache_conf = "/etc/apache2/sites-available/#{application}"
+      apache_conf = "/etc/apache2/sites-available/#{application}.conf"
       put render("php_vhost", binding), "#{application}.conf"
       sudo "mv #{application}.conf #{apache_conf}"
       sudo "a2ensite #{application}"
@@ -46,7 +46,7 @@ Capistrano::Configuration.instance(true).load do
 
       logger.info "generating .conf file"
       logger.info "placing #{application}.conf on remote server"
-      apache_conf = "/etc/apache2/sites-available/#{application}"
+      apache_conf = "/etc/apache2/sites-available/#{application}.conf"
       put render("secure_php_vhost", binding), "#{application}.conf"
       sudo "mv #{application}.conf #{apache_conf}"
       sudo "a2ensite #{application}"

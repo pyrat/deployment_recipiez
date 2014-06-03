@@ -4,12 +4,12 @@ Capistrano::Configuration.instance(true).load do
 
     desc "configures thin, requires num_servers and start_port"
     task :configure, :roles => :app do
-      sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path}  --servers #{num_servers} -e #{rails_env} --port #{start_port}"
+      sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path}  --servers #{num_servers} -e #{rails_env} --port #{start_port} --log #{current_path}/log/#{application}_thin.log"
     end
 
     desc "configures thin with rackup eg. Sinatra. Requires thin_port, rack_env"
     task :configure_rack, :roles => :app do
-      sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path} --servers #{num_servers} --port #{start_port} -e #{rack_env} -R #{current_path}/config.ru"
+      sudo "thin config -C /etc/thin/#{application}.yml -c #{current_path} --servers #{num_servers} --port #{start_port} -e #{rack_env} -R #{current_path}/config.ru --log #{current_path}/log/#{application}_thin.log"
     end
 
     desc "install thin"

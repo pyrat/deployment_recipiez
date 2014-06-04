@@ -25,6 +25,7 @@ server {
             root   <%= current_path %>/public/;
             index  index.html;
             client_max_body_size 50M;
+            types_hash_max_size 2048;
             
             # this rewrites all the requests to the maintenance.html
             # page if it exists in the doc root. This is for capistrano's
@@ -85,6 +86,7 @@ server {
               root   <%= current_path %>/public/;
               index  index.html;
               client_max_body_size 50M;
+              types_hash_max_size 2048;
               
               
               # this rewrites all the requests to the maintenance.html

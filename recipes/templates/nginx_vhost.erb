@@ -9,15 +9,15 @@ upstream <%= application %> {
 server {
 
             listen <%= web_port ? web_port : 80 %>;
-            server_name  www.<%= domain %>;
-            rewrite ^(.*) http://<%= domain %>$1 permanent;
+            server_name  www.<%= app_domain %>;
+            rewrite ^(.*) http://<%= app_domain %>$1 permanent;
            }
 
 
 server {
 
             listen <%= web_port ? web_port : 80 %>;
-            server_name <%= domain %>;
+            server_name <%= app_domain %>;
 
             access_log <%= current_path %>/log/access.log;
             error_log <%= current_path %>/log/error.log;

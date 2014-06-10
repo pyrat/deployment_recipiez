@@ -23,6 +23,15 @@ namespace :recipiez do
     run "cp #{release_path}/config/database.#{rails_env} #{release_path}/config/database.yml"
   end
 
+  desc "Render mongoid.yml, you need to set :dynamic_replicaset_info as a string eg. ['1.2.3.4:27017', '2.3.4.5:27017', '6.7.8.9:27017']"
+  task :render_mongo_file do
+    location = fetch(:template_dir, "config") + "/mongoid.#{rails_env}.erb"
+    template = File.read(location)
+    config = ERB.new(template)
+
+    put config.result(binding), "#{release_path}/config/mongoid.yml.production"
+  end
+
   desc "Rename db file for deployment."
   task :rename_settings_file do
     run "cp #{release_path}/config/settings.yml.#{rails_env} #{release_path}/config/settings.yml"

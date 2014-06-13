@@ -1,3 +1,3 @@
 module Recipiez
-  VERSION = '0.6.6'
+  VERSION = '0.6.9'
 end

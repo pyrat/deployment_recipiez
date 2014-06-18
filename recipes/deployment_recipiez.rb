@@ -29,7 +29,7 @@ namespace :recipiez do
     template = File.read(location)
     config = ERB.new(template)
 
-    put config.result(binding), "#{release_path}/config/mongoid.yml.production"
+    put config.result(binding), "#{release_path}/config/mongoid.yml"
   end
 
   desc "Rename db file for deployment."

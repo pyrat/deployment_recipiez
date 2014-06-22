@@ -16,7 +16,6 @@ Capistrano::Configuration.instance(true).load do
     task :install, :roles => :app do
       sudo "gem install thin"
       sudo "thin install"
-      sudo "/usr/sbin/update-rc.d -f thin defaults"
     end
 
     desc "start thin"

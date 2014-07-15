@@ -90,7 +90,7 @@ namespace :recipiez do
 
     desc "Dump database, copy it across and restore locally."
     task :pull do
-      set_variables_from_yaml
+      set_variables_from_yaml(yaml_env)
       archive = generate_archive(application)
       filename = get_filename(application)
       cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
@@ -116,35 +116,7 @@ namespace :recipiez do
       puts "All done!"
     end
 
-    desc "Dump alternate database, copy it across and restore it locally"
-    task :pull_alternate do
-      set_variables_from_yaml(alternate_yaml_env)
-      archive = generate_archive(application)
-      filename = get_filename(application)
-      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
-      cmd += " -h #{db_host} " if exists?('db_host')
-      cmd += " -p#{db_password} "
-      cmd += "#{database_to_dump} > #{archive}"
-      result = run(cmd)
-
-      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
-      puts "running #{cmd}"
-      result = system(cmd)
-      puts result
-      run "rm #{archive}"
-
-      puts "Restoring db"
-      begin
-        `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
-      rescue
-        # do nothing
-      end
-      `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
-      `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
-      puts "All done!"
-    end
-
-    desc "Push up the db"
+   desc "Push up the db"
     task :push do
       set_variables_from_yaml
       filename = get_filename(application)

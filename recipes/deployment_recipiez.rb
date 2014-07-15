@@ -116,6 +116,34 @@ namespace :recipiez do
       puts "All done!"
     end
 
+    desc "Dump alternate database, copy it across and restore it locally"
+    task :pull_alternate do
+      set_variables_from_yaml(alternate_yaml_env)
+      archive = generate_archive(application)
+      filename = get_filename(application)
+      cmd = "mysqldump --opt --skip-add-locks -u #{db_user} "
+      cmd += " -h #{db_host} " if exists?('db_host')
+      cmd += " -p#{db_password} "
+      cmd += "#{database_to_dump} > #{archive}"
+      result = run(cmd)
+
+      cmd = "rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{archive} #{dump_dir}#{filename}"
+      puts "running #{cmd}"
+      result = system(cmd)
+      puts result
+      run "rm #{archive}"
+
+      puts "Restoring db"
+      begin
+        `mysqladmin -u#{db_local_user} -p#{db_local_password} --force drop #{db_dev}`
+      rescue
+        # do nothing
+      end
+      `mysqladmin -u#{db_local_user} -p#{db_local_password} --force create #{db_dev}`
+      `cat #{dump_dir}#{get_filename(application)} | mysql -u#{db_local_user} -p#{db_local_password} #{db_dev}`
+      puts "All done!"
+    end
+
     desc "Push up the db"
     task :push do
       set_variables_from_yaml
@@ -310,14 +338,21 @@ def format_svn_log(current_revision, previous_revision)
 end
 
 
-def set_variables_from_yaml
+# Need to consider how to have an alternative yaml environment.
+def set_variables_from_yaml(alternate_environment = "")
+
+  if alternate_environment
+    yaml_env = alternate_environment
+  else
+    yaml_env = rails_env
+  end
 
   unless File.exists?("config/recipiez.yml")
     raise StandardError, "You need a config/recipiez.yml file which defines the database syncing settings. Run recipiez:generate_config"
   end
 
   global = YAML.load_file("config/recipiez.yml")
-  app_config = global[rails_env]
+  app_config = global[yaml_env]
   app_config.each_pair do |key, value|
     set key.to_sym, value
   end

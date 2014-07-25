@@ -88,7 +88,7 @@ namespace :recipiez do
 
   namespace :db do
 
-    desc "Dump database, copy it across and restore locally."
+    desc "Dump database, copy it across and restore locally. To use a different environment, pass yaml_env using the -s switch. eg. cap production recipiez:db:pull -s yaml_env=portal"
     task :pull do
       set_variables_from_yaml(yaml_env)
       archive = generate_archive(application)

@@ -18,7 +18,7 @@ Capistrano::Configuration.instance(true).load do
       nginx::nodejs
       node::generate_upstart
       monit::node
-      logrotate:configure_ec2_performance
+      logrotate::configure_ec2_performance
       recipiez::bundler
       recipiez::libxml
     end

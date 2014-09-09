@@ -150,9 +150,9 @@ namespace :recipiez do
       run "rm #{filename}"
     end
 
-    desc "Dump database structure only, copy it across and restore locally."
+    desc "Dump database structure, copy it across and restore locally. To use a different environment, pass yaml_env using the -s switch. eg. cap production recipiez:db:pull_structure -s yaml_env=portal"
     task :pull_structure do
-      set_variables_from_yaml
+      set_variables_from_yaml(yaml_env)
       archive = generate_archive(application)
       filename = get_filename(application)
       cmd = "mysqldump --opt --skip-add-locks -u #{db_user} -d "

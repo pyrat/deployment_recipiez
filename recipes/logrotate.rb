@@ -10,6 +10,8 @@ Capistrano::Configuration.instance(true).load do
       puts generated
       put generated, "#{application}"
       sudo "mv #{application} /etc/logrotate.d/#{application}"
+      sudo "chown root:root /etc/logrotate.d/#{application}"
+      sudo "chmod 644 /etc/logrotate.d/#{application}"
     end
 
     desc "Configure logrotate for high traffic apps on EC2"
@@ -23,6 +25,8 @@ Capistrano::Configuration.instance(true).load do
       puts generated
       put generated, "#{application}"
       sudo "mv #{application} /etc/logrotate.d/#{application}"
+      sudo "chown root:root /etc/logrotate.d/#{application}"
+      sudo "chmod 644 /etc/logrotate.d/#{application}"
     end
   end
 

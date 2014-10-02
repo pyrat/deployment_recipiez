@@ -32,7 +32,8 @@ Capistrano::Configuration.instance(true).load do
   task :move_log_dir_to_mnt do
     sudo "mkdir -p /mnt/application_logs/#{application}"
     sudo "chown -R #{user}:#{user} /mnt/application_logs/#{application}"
-    sudo "mv /var/www/apps/#{application}/shared/log/ /mnt/application_logs/#{application}"
+    sudo "mv /var/www/apps/#{application}/shared/log/* /mnt/application_logs/#{application}"
+    sudo "rm -fr /var/www/apps/#{application}/shared/log"
     sudo "ln -s /mnt/application_logs/#{application} /var/www/apps/#{application}/shared/log"
     # Now need to deploy the app.
   end

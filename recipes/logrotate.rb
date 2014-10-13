@@ -14,33 +14,6 @@ Capistrano::Configuration.instance(true).load do
       sudo "chmod 644 /etc/logrotate.d/#{application}"
     end
 
-    desc "Configure logrotate for high traffic apps on EC2"
-    task :configure_ec2_performance, :roles => [:app, :web] do
-      _cset :log_directory, 'log'
-
-      sudo "mkdir -p /mnt/archived_logs/#{application}"
-      sudo "chown -R  #{user}:#{user} /mnt/archived_logs"
-      generated = render('logrotate_ec2', binding)
-      puts generated
-      put generated, "#{application}"
-      sudo "mv #{application} /etc/logrotate.d/#{application}"
-      sudo "chown root:root /etc/logrotate.d/#{application}"
-      sudo "chmod 644 /etc/logrotate.d/#{application}"
-    end
-
-    desc "Move log directory to /mnt"
-    task :move_log_dir_to_mnt do
-      sudo "mkdir -p /mnt/application_logs/#{application}"
-      sudo "chown -R #{user}:#{user} /mnt/application_logs/#{application}"
-      begin
-        sudo "mv /var/www/apps/#{application}/shared/log/* /mnt/application_logs/#{application}"
-      rescue
-        # ignore the error from this
-      end
-      sudo "rm -fr /var/www/apps/#{application}/shared/log"
-      sudo "ln -s /mnt/application_logs/#{application} /var/www/apps/#{application}/shared/log"
-    end
-
   end
 
 end

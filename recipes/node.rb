@@ -12,18 +12,7 @@ Capistrano::Configuration.instance(true).load do
       sudo "mv #{application}.conf /etc/init/#{application}.conf"
     end
     
-    desc "Install the nodejs components to the server, ec2 only!"
-    task :setup_ec2 do
-      recipiez::setup
-      nginx::nodejs
-      node::generate_upstart
-      monit::node
-      logrotate::configure_ec2_performance
-      recipiez::bundler
-      recipiez::libxml
-    end
-
-    desc "Install nodejs non ec2"
+    desc "Setup a server to deploy a rails app."
     task :setup do
       recipiez::setup
       nginx::nodejs
@@ -35,7 +24,6 @@ Capistrano::Configuration.instance(true).load do
     end
 
   end
-  
   
   namespace :npm do
     task :install do

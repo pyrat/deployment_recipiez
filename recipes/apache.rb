@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(true).load do
       apache_conf = "/etc/apache2/sites-available/#{application}.conf"
       put render("passenger_vhost", binding), "#{application}.conf"
       sudo "mv #{application}.conf #{apache_conf}"
-      sudo "a2ensite #{application}"
+      sudo "a2ensite #{application}.conf"
       sudo "/etc/init.d/apache2 reload"
     end
 

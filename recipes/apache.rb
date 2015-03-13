@@ -13,6 +13,18 @@ Capistrano::Configuration.instance(true).load do
       sudo "/etc/init.d/apache2 reload"
     end
 
+    desc "Setup passenger elb vhost with HTTPS redirect (http internally)"
+    task :passenger_elb_vhost do
+      logger.info "generating .conf file"
+      logger.info "placing #{application}.conf on remote server"
+      apache_conf = "/etc/apache2/sites-available/#{application}.conf"
+      put render("passenger_elb_vhost", binding), "#{application}.conf"
+      sudo "mv #{application}.conf #{apache_conf}"
+      sudo "a2ensite #{application}.conf"
+      sudo "/etc/init.d/apache2 reload"
+    end
+
+
 
     desc "PHP Vhost Setup"
     task :php_vhost do

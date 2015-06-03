@@ -11,6 +11,7 @@ DocumentRoot <%= deploy_to %>/current/public
 
 <Directory <%= deploy_to %>/current/public>
   AllowOverride all
+  Require all granted
   <% if allowed_ips.length > 0 %>
   Allow from <%= allowed_ips.join(" ") %>
   <% end %>

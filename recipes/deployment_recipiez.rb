@@ -221,6 +221,11 @@ namespace :recipiez do
     sudo "apt-get install -y libxml2 libxml2-dev libxslt1-dev"
   end
 
+  desc "Install libmcrypt"
+  task :libmcrypt do
+    sudo 'apt-get install libmcrypt4 libmcrypt-dev'
+  end
+
 
   desc "Setup /var/www/apps"
   task :app_dir do

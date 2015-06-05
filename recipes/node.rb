@@ -21,6 +21,7 @@ Capistrano::Configuration.instance(true).load do
       logrotate::configure
       recipiez::bundler
       recipiez::libxml
+      recipiez::libmcrypt
     end
 
   end

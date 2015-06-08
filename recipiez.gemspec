@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.license = 'MIT'
   s.add_dependency('tinder')
-  s.add_dependency('travis')
+  # s.add_dependency('travis')
     
   s.required_rubygems_version = ">= 1.3.1"
   s.require_path = 'lib'

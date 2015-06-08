@@ -1,4 +1,4 @@
-require 'travis/pro'
+# require 'travis/pro'
 
 Capistrano::Configuration.instance(true).load do
 

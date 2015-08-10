@@ -9,6 +9,12 @@ ErrorLog      /var/log/apache2/<%= app_domain %>-error.log
 
 DocumentRoot <%= deploy_to %>/current/public
 
+<% if ssl_redirect_elb == 'on' %>
+RewriteEngine on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI}
+<% end %>
+
 <Directory <%= deploy_to %>/current/public>
   AllowOverride all
   Require all granted
@@ -24,6 +30,8 @@ DocumentRoot <%= deploy_to %>/current/public
 </Directory>
 
 </VirtualHost>
+
+
 
 
 <% if ssl == 'on' %>

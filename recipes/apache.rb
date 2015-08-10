@@ -38,6 +38,10 @@ Capistrano::Configuration.instance(true).load do
       unless exists? :ssl
         set :ssl, 'off'
       end
+      
+      unless exists? :ssl_redirect_elb
+        set :ssl_redirect_elb, "off"
+      end
 
 
       logger.info "generating .conf file"

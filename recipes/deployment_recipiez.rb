@@ -209,6 +209,18 @@ namespace :recipiez do
       system "rsync -vrz -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" --exclude='.DS_Store' public/system/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system"
     end
 
+    
+    desc "Rsync the wordpress uploads"
+    task :pull_wordpress_uploads do
+      `rsync -av -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" #{user}@#{roles[:db].servers.first}:#{shared_path}/system/uploads/ public/wp-content/uploads/`
+    end
+
+    desc "Sync up the system directory"
+    task :push_wordpress_uploads do
+      system "rsync -vrz -e \"ssh -p #{ssh_options[:port]} #{get_identities}\" --exclude='.DS_Store' public/wp-content/uploads/ #{user}@#{roles[:db].servers.first}:#{shared_path}/system/uploads"
+    end
+
+
   end
 
   desc "Install bundler"

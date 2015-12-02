@@ -1,0 +1,17 @@
+#!upstart
+
+description "Generated Upstart Go Config"
+author      "Alastair Brunton"
+
+start on (local-filesystems and net-device-up IFACE=eth0) 
+stop  on shutdown
+
+respawn                # restart when job dies
+respawn limit 5 60     # give up restart after 5 respawns in 60 seconds
+
+script
+  echo $$ > /var/run/<%= application %>.pid
+  exec sudo -u <%= user %> <%= current_path %>/<%= application %> -go_env=<%= go_env %> >> <%= current_path %>/log/<%= go_env %>.log 2>&1
+end script
+
+

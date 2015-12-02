@@ -57,6 +57,13 @@ Capistrano::Configuration.instance(true).load do
       sudo "/etc/init.d/monit restart"
     end
 
+    desc "configures monit for go"
+    task :go, :roles => :web do
+      put render('go_monit', binding), "go_monit.conf"
+      sudo "mv go_monit.conf /etc/monit/conf.d/go_monit_#{application}.conf"
+      sudo "/etc/init.d/monit restart"
+    end
+
 
   end
 

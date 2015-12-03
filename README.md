@@ -13,6 +13,7 @@ A collection of capistrano recipes for doing a whole host of things to servers.
 * Thin Setup
 * Node js deployment
 * Foreman Upstart Functionality
+* Golang deployment
 
 ## Installation
 

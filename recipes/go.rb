@@ -17,11 +17,13 @@ Capistrano::Configuration.instance(true).load do
       unless exists? :go_env
         set :go_env, 'development'
       end
+
+      unless exists? :go_port
+        set :go_port, "8080"
+      end
       
       put render("upstart_go", binding), "#{application}.conf"
       sudo "mv #{application}.conf /etc/init/#{application}.conf"
-
-
 
     end
 

@@ -10,6 +10,7 @@ Capistrano::Configuration.instance(true).load do
       go::generate_upstart
       monit::go
       logrotate::configure
+      nginx::golang
     end
 
     task :generate_upstart do

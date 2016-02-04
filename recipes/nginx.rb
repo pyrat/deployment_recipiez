@@ -52,6 +52,36 @@ Capistrano::Configuration.instance(true).load do
       end
     end
 
+
+    desc "Generates a simple proxy configuration for a golang application"
+    task :golang do
+            
+      _cset :go_port, 3000
+      _cset :ssl_enabled, false
+      
+      
+      put render("nginx_golang", binding), "#{application}.conf"
+      sudo "mv #{application}.conf /etc/nginx/sites-available/#{application}.conf"
+      begin
+        sudo "ln -s /etc/nginx/sites-available/#{application}.conf /etc/nginx/sites-enabled/#{application}.conf"
+      rescue
+        # do nothing
+      end
+
+      begin
+        stop
+      rescue
+        # do nothing
+      end
+
+      begin
+        start
+      rescue
+        # do nothing
+      end
+    end
+
+
     desc "Starts Nginx webserver"
     task :start, :roles => :web do
       sudo "/etc/init.d/nginx start"

@@ -9,10 +9,11 @@ stop  on shutdown
 respawn                # restart when job dies
 respawn limit 5 60     # give up restart after 5 respawns in 60 seconds
 
+chdir <%= current_path %>
 script
   ulimit -n 100000
   echo $$ > /var/run/<%= application %>.pid
-  exec sudo -u <%= user %> cd <%= current_path %> && ./<%= application %> -go_port=<%= go_port %> -go_env=<%= go_env %> >> <%= current_path %>/log/<%= go_env %>.log 2>&1
+  exec sudo -u <%= user %> <%= current_path %>/<%= application %> -go_port=<%= go_port %> -go_env=<%= go_env %> >> <%= current_path %>/log/<%= go_env %>.log 2>&1
 end script
 
 

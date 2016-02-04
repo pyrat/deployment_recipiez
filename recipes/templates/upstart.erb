@@ -9,6 +9,8 @@ stop  on shutdown
 respawn                # restart when job dies
 respawn limit 5 60     # give up restart after 5 respawns in 60 seconds
 
+chdir <%= current_path %>
+
 script
   ulimit -n 100000
   echo $$ > /var/run/<%= application %>.pid

@@ -1,0 +1,39 @@
+################### Filebeat Configuration Example #########################
+#
+############################# Filebeat #####################################
+filebeat:
+  # List of prospectors to fetch data.
+  prospectors:
+    # This is a text lines files harvesting definition
+    -
+      # Path like /var/log/*/*.log can be used.
+      # Make sure no file is defined twice as this can lead to unexpected behaviour.
+      paths:
+        - /var/www/apps/*/current/log/production.log
+      # Ignore files which were modified more then the defined timespan in the past
+      # Time strings like 2h (2 hours), 5m (5 minutes) can be used.
+      ignore_older: 24h
+      # Type to be published in the 'type' field.
+      document_type: nodejs
+  # Name of the registry file, which is used to keep track of the location
+  # of logs in the files that have already been sent between restarts
+  # of the filebeat process.
+  registry_file: /var/lib/filebeat/registry
+###############################################################################
+############################# Libbeat Config ##################################
+# Base config file used by all other beats for using libbeat features
+############################# Output ##########################################
+# Configure what outputs to use when sending the data collected by the beat.
+output:
+  logstash:
+    # The Logstash hosts  
+    hosts: ["ec2-54-216-1-197.eu-west-1.compute.amazonaws.com:5000"]
+    bulk_max_size: 1024
+    tls:
+      # List of root certificates for HTTPS server verifications
+      certificate_authorities: ["/etc/pki/tls/certs/logstash-forwarder.crt"]
+############################# Logging #########################################
+# default to syslog.
+logging:
+  files:
+    rotateeverybytes: 10485760 # = 10MB

@@ -19,7 +19,7 @@ Capistrano::Configuration.instance(true).load do
       generated = render('filebeat', binding)
       puts generated
       put generated, "#{application}"
-      sudo "mv #{application}, /etc/filebeat/filebeat.yml"
+      sudo "mv #{application} /etc/filebeat/filebeat.yml"
       
       sudo "service filebeat restart"
       sudo "update-rc.d filebeat defaults 95 10"

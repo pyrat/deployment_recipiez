@@ -21,8 +21,9 @@ Capistrano::Configuration.instance(true).load do
       put generated, "#{application}"
       sudo "mv #{application} /etc/filebeat/filebeat.yml"
       
-      sudo "service filebeat restart"
       sudo "update-rc.d filebeat defaults 95 10"
+      sudo "service filebeat stop"
+      sudo "service filebeat start"
     end
 
 

@@ -9,7 +9,7 @@ Capistrano::Configuration.instance(true).load do
       sudo "apt-get update"
       sudo "apt-get install -y filebeat"
       sudo "mkdir -p /etc/pki/tls/certs"
-      run "wget https://gist.githubusercontent.com/pyrat/0ef4a2e6e9d5b8556518385379648187/raw/29479a25ce70bd0ddb24ed02562f73ab7c209d71/logstash-forwarder.crt"
+      run "wget --no-check-certificate https://gist.githubusercontent.com/pyrat/0ef4a2e6e9d5b8556518385379648187/raw/29479a25ce70bd0ddb24ed02562f73ab7c209d71/logstash-forwarder.crt"
       sudo "mv logstash-forwarder.crt /etc/pki/tls/certs/"
     end
 

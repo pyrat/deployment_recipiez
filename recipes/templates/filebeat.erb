@@ -27,7 +27,7 @@ filebeat:
 output:
   logstash:
     # The Logstash hosts  
-    hosts: ["ec2-54-216-1-197.eu-west-1.compute.amazonaws.com:5000"]
+    hosts: [<%= @logstash_host %>]
     bulk_max_size: 1024
     tls:
       # List of root certificates for HTTPS server verifications
